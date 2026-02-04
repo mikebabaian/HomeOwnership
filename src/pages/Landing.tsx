@@ -9,7 +9,7 @@ export default function Landing(){
       <section className="hero">
         <div className="meta">
           <div className="kicker">Welcome</div>
-          <h2>Home Owner Steward</h2>
+          <h2>Own Well Services</h2>
           <p className="muted">A guided, end-to-end companion for the journey into and through home ownership.</p>
           <div>
             <Link className="btn btn-primary" to="/services">Explore the Service</Link>

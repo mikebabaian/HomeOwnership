@@ -1,4 +1,4 @@
-# Home Owner Steward — PWA Starter
+# Own Well Services — PWA Starter
 
 Minimal React + Vite PWA scaffold implementing the Phase 0 spec.
 

@@ -1,4 +1,4 @@
-# Home Owner Steward Style Guide (Bootstrap)
+# Own Well Services Style Guide (Bootstrap)
 
 Purpose: Add more color, depth, and visual hierarchy while keeping the site clean and trustworthy. This guide defines a small design system the agent can apply consistently across the site.
 

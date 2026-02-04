@@ -9,7 +9,7 @@ export default function Overview() {
         <div className="meta">
           <div className="kicker">Services</div>
           <h2>Support for the full home ownership journey</h2>
-          <p className="muted">From saving and planning to maintenance and improvements, Home Owner Steward keeps everything understandable and organized.</p>
+          <p className="muted">From saving and planning to maintenance and improvements, Own Well Services keeps everything understandable and organized.</p>
           <div>
             <a className="btn btn-primary" href="#">Choose your stage</a>
           </div>

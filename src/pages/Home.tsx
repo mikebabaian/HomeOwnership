@@ -2,14 +2,14 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHome, faClock, faWrench, faCalendar, faKey, faBookOpen, faEye, faSmile } from '@fortawesome/free-solid-svg-icons'
-import ChatHero from '../images/ChatGPT Image Feb 1, 2026, 01_13_41 PM.png'
+import ChatHero from '../images/OwnWellLogo.png'
 
 export default function Home() {
   return (
     <div>
       <section className="hero">
         <div className="meta">
-          <h1>Home Owner Steward</h1>
+          <h1>Own Well Services</h1>
   <p class="hero-tagline">
     A guided companion for buying, owning, and improving a home.
   </p>

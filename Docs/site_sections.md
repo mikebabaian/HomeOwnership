@@ -1,4 +1,4 @@
-# Home Owner Steward — Site Sections (Expanded) + Visual Content Guidance (v0.2)
+# Own Well Services — Site Sections (Expanded) + Visual Content Guidance (v0.2)
 *Detailed page specs for an agent to implement routes, layouts, copy, and UI components, including specific icon/image guidance and “what it should look like” notes.*
 
 ---
@@ -87,7 +87,7 @@ Explain what the product does quickly, show credibility, and route users toward:
 - Right: Hero illustration
 
 **Copy**
-- H1: **Home Owner Steward**
+- H1: **Own Well Services**
 - Tagline: “A guided companion for buying, owning, and improving a home.”
 - 1–2 sentence explainer: “Plan your purchase, estimate real monthly costs, and stay on top of maintenance after closing.”
 
@@ -193,7 +193,7 @@ Make it obvious what the service does across the full lifecycle:
 ### A) Hero + Summary
 **Copy**
 - Title: “Support for the full home ownership journey”
-- 1 paragraph: “From saving and planning to maintenance and value improvements, Home Owner Steward keeps everything understandable and organized.”
+- 1 paragraph: "From saving and planning to maintenance and value improvements, Own Well Services keeps everything understandable and organized."
 
 **Hero Visual**
 - Journey/path illustration: renter → key handoff → maintained home

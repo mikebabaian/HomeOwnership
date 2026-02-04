@@ -1,4 +1,4 @@
-# Home Owner Steward — Technical Specs (v0.1)
+# Own Well Services — Technical Specs (v0.1)
 *React PWA starter (static) with a clear path to a future .NET backend.*
 
 ---
@@ -32,7 +32,7 @@
 ---
 
 ## App Identity
-- **App name:** Home Owner Steward
+- **App name:** Own Well Services
 - **Short name:** Steward
 - **Theme color:** TBD (set a placeholder)
 - **Background color:** TBD (set a placeholder)
@@ -43,7 +43,7 @@
 
 ## PWA Requirements (Phase 0)
 1. **Web App Manifest**
-   - name: "Home Owner Steward"
+   - name: "Own Well Services"
    - short_name: "Steward"
    - start_url: "/"
    - display: "standalone"

@@ -16,11 +16,11 @@ export default function App() {
         <div className="container brand-container">
           <Link to="/" className="brand-block" aria-label="Home">
             <div className="brand-badge">
-              <img src={LogoImg} alt="Home Owner Steward" />
+              <img src={LogoImg} alt="Own Well Services" />
             </div>
             <div className="brand-lockup">
-              <div className="brand-sub">Home Owner</div>
-              <div className="brand-main">Steward</div>
+              <div className="brand-sub">Own Well</div>
+              <div className="brand-main">Services</div>
             </div>
           </Link>
           <div className="brand-tagline">Clear guidance for confident home decisions.</div>
@@ -65,14 +65,14 @@ export default function App() {
         <div className="footer-top-band">
           <div className="container footer-top">
             <div className="footer-brand">
-              <div className="footer-badge"><img src={LogoImg} alt="Home Owner Steward" /></div>
+              <div className="footer-badge"><img src={LogoImg} alt="Own Well Services" /></div>
               <div className="footer-mission">Helping people plan, buy, and maintain homes with clarity.</div>
             </div>
           </div>
         </div>
 
         <div className="footer-links container">
-          <div className="copyright">© {new Date().getFullYear()} Home Owner Steward</div>
+          <div className="copyright">© {new Date().getFullYear()} Own Well Services</div>
           <nav>
             <Link to="/about">About</Link>
             <Link to="/resources">Resources</Link>

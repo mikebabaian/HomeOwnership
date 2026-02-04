@@ -9,7 +9,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'robots.txt', 'icons/*'],
       manifest: {
-        name: 'Home Owner Steward',
+        name: 'Own Well Services',
         short_name: 'Steward',
         start_url: '/',
         display: 'standalone',

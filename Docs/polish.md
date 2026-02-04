@@ -1,4 +1,4 @@
-# Home Owner Steward — Contrast, Depth & Layout Polish (Final)
+# Own Well Services — Contrast, Depth & Layout Polish (Final)
 *This document replaces earlier polish notes. Implement these rules exactly to fix flatness, improve contrast, and clarify logo placement.*
 
 ---
@@ -19,7 +19,7 @@ This is not exploratory. These are **prescriptive instructions**.
 ## 1) Remove Redundant / Out-of-Place Elements
 
 ### Remove the “HOME” Label Above the Hero Title
-- Delete the small uppercase “HOME” text above “Home Owner Steward” on the landing page.
+- Delete the small uppercase "HOME" text above "Own Well Services" on the landing page.
 
 **Why**
 - You already have navigation with an active state.
