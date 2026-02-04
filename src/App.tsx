@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Routes, Route, NavLink, Link } from 'react-router-dom'
 import LogoImg from './images/icon-rounded-512.png'
 import Home from './pages/Home'
@@ -9,6 +9,8 @@ import Community from './pages/Community'
 import MarketRates from './pages/MarketRates'
 
 export default function App() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
   return (
     <div>
       {/* Brand Bar - full width */}
@@ -30,13 +32,18 @@ export default function App() {
       {/* Nav Bar - full width, sticky */}
       <div className="nav-bar">
         <div className="container nav-container">
-          <nav className="nav-left">
-            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/">Home</NavLink>
-            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/services">Services</NavLink>
-            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/cost-calculator">Cost Calculator</NavLink>
-            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/guide">Guide</NavLink>
-            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/community">Community</NavLink>
-            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/best-market-mortgage-rates">Best Market Rates</NavLink>
+          <button className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <nav className={`nav-left ${mobileMenuOpen ? 'open' : ''}`}>
+            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/" onClick={() => setMobileMenuOpen(false)}>Home</NavLink>
+            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/services" onClick={() => setMobileMenuOpen(false)}>Services</NavLink>
+            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/cost-calculator" onClick={() => setMobileMenuOpen(false)}>Cost Calculator</NavLink>
+            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/guide" onClick={() => setMobileMenuOpen(false)}>Guide</NavLink>
+            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/community" onClick={() => setMobileMenuOpen(false)}>Community</NavLink>
+            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/best-market-mortgage-rates" onClick={() => setMobileMenuOpen(false)}>Best Market Rates</NavLink>
           </nav>
           <div className="nav-actions">
             <Link className="btn btn-primary" to="/cost-calculator">Open Calculator</Link>

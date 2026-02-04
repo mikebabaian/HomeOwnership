@@ -73,6 +73,11 @@ body {
 .nav-left { display:flex; gap:12px; align-items:center }
 .nav-actions { display:flex; align-items:center }
 
+.hamburger { display: none; flex-direction: column; background: none; border: none; cursor: pointer; padding: 8px; }
+.hamburger span { width: 20px; height: 2px; background: var(--text-primary); margin: 2px 0; transition: 0.3s; }
+
+.nav-left.open { display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: white; padding: 16px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); gap: 8px; }
+
 .brand { display:flex; align-items:center; gap:12px }
 .brand .logo { display:none }
 .brand h1 { margin:0 }
@@ -181,10 +186,25 @@ article, section { background: transparent; padding: 0; box-shadow: none }
   .hero { flex-direction:column; align-items:flex-start; padding: 22px }
   .brand-badge img { width:48px; height:48px }
   .brand-inline .brand-badge img { width:56px; height:56px }
-  .brand-badge { display: none }
+  .brand-badge { display: block }
+  .brand-tagline { display: none }
+  .brand-container { justify-content: center; position: absolute; top: 0; bottom: 0; left: 0; right: 0; align-items: center; padding: 0; }
+  .brand-badge { position: absolute; left: 24px; top: 50%; transform: translateY(-50%); }
+  .brand-lockup { text-align: center; }
+  .brand-bar { min-height: 80px; position: relative; }
+  .brand-bar { padding: 10px 0; }
+  .brand-sub { font-size: 1rem; }
+  .brand-main { font-size: 1.5rem; }
+  .container { padding: 0 24px; }
   .hero-image { width:175px; max-width:90% }
   .hero-chat-image { width:200px; max-width:90% }
   .hero-illustration { order: 0 }
+
+  .hamburger { display: flex; }
+  .nav-left { display: none; }
+  .nav-left.open { display: flex; }
+  .nav-actions { display: none; }
+  .nav-container { padding: 16px 0; }
 }
 
 /* Footer */
