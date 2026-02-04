@@ -6,7 +6,7 @@ import Overview from './pages/Overview'
 import CostCalculator from './pages/CostCalculator'
 import Guide from './pages/Guide'
 import Community from './pages/Community'
-import Mission from './pages/Mission'
+import MarketRates from './pages/MarketRates'
 
 export default function App() {
   return (
@@ -36,10 +36,10 @@ export default function App() {
             <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/cost-calculator">Cost Calculator</NavLink>
             <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/guide">Guide</NavLink>
             <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/community">Community</NavLink>
-            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/mission">Mission</NavLink>
+            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/best-market-mortgage-rates">Best Market Rates</NavLink>
           </nav>
           <div className="nav-actions">
-            <Link className="btn btn-primary" to="/cost-calculator">Estimate Cost</Link>
+            <Link className="btn btn-primary" to="/cost-calculator">Open Calculator</Link>
           </div>
         </div>
       </div>
@@ -55,7 +55,7 @@ export default function App() {
             <Route path="/cost-calculator" element={<CostCalculator />} />
             <Route path="/guide" element={<Guide />} />
             <Route path="/community" element={<Community />} />
-            <Route path="/mission" element={<Mission />} />
+            <Route path="/best-market-mortgage-rates" element={<MarketRates />} />
           </Routes>
         </main>
       </div>
@@ -67,9 +67,6 @@ export default function App() {
             <div className="footer-brand">
               <div className="footer-badge"><img src={LogoImg} alt="Home Owner Steward" /></div>
               <div className="footer-mission">Helping people plan, buy, and maintain homes with clarity.</div>
-            </div>
-            <div>
-              <Link className="btn btn-ghost" to="/cost-calculator">Estimate Cost</Link>
             </div>
           </div>
         </div>

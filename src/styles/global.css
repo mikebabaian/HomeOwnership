@@ -53,17 +53,17 @@ body {
 
 .brand-bar {
   width: 100%;
-  background: linear-gradient(180deg, var(--hos-tint-primary), rgba(234,242,255,0.6));
+  background: var(--hos-secondary);
   border-bottom: 1px solid var(--hos-border);
 }
 .brand-container { display:flex; align-items:center; justify-content:space-between; padding:16px 0 }
 .brand-block { display:flex; align-items:center; gap:16px; text-decoration:none }
-.brand-badge { display:flex; align-items:center; justify-content:center; background: var(--navy-tint); padding:8px; border-radius:10px; border:1px solid rgba(11,34,56,0.06) }
+.brand-badge { display:flex; align-items:center; justify-content:center; background: white; padding:8px; border-radius:10px; border:1px solid rgba(255,255,255,0.2) }
 .brand-badge img { width:64px; height:64px; object-fit:contain }
 .brand-lockup { line-height:1 }
-.brand-sub { font-size:0.875rem; color:var(--primary-navy) }
-.brand-main { font-size:1.25rem; font-weight:700; color:var(--primary-navy); letter-spacing:-0.5px }
-.brand-tagline { color:var(--muted); font-size:0.95rem }
+.brand-sub { font-size:0.875rem; color: rgba(255,255,255,0.8) }
+.brand-main { font-size:1.25rem; font-weight:700; color: white; letter-spacing:-0.5px }
+.brand-tagline { color: rgba(255,255,255,0.9); font-size:0.95rem }
 
 .brand-bleed { width:100%; display:flex; justify-content:center; background: var(--navy-tint); }
 .brand-bleed-logo { width:100%; max-width:1100px; height:96px; object-fit:contain; padding:14px 20px; display:none }
@@ -211,6 +211,9 @@ a:focus, button:focus {
 .stack { display:flex; flex-direction:column; gap:12px }
 .row { display:flex; gap:12px; align-items:center }
 
+/* Result line for calculator */
+.result-line { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px }
+
 /* Slightly larger type scale for headings */
 h1 { font-size: 1.125rem }
 .brand h1 { font-size: 1rem }
@@ -227,8 +230,17 @@ h3 { font-size: 1.125rem }
 /* header CTA visual emphasis */
 .header-cta { box-shadow: 0 6px 18px rgba(15,23,42,0.06) }
 
-/* active link indicator (simple underline) */
-.nav-link.active { text-decoration: underline; text-underline-offset: 6px }
+.card .row {
+  flex-wrap: nowrap;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.card h3 {
+  white-space: nowrap;
+}
+.card .icon-badge {
+  margin-left: 8px;
+}
 
 /* How it works - grouped step cards */
 .steps {

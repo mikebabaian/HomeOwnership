@@ -163,15 +163,15 @@ export default function CostCalculator(){
           <div className="card">
             <h3>Results</h3>
             <div className="stack">
-              <div className="row"><strong>Total monthly</strong><div style={{marginLeft:'auto', fontSize:20}}>{fmt(derived.total)}</div></div>
+              <div className="result-line"><strong>Total monthly</strong><div style={{fontSize:20}}>{fmt(derived.total)}</div></div>
 
-              <div className="row"><div>Principal &amp; Interest</div><div style={{marginLeft:'auto'}}>{fmt(derived.monthlyPI)}</div></div>
-              <div className="row"><div>PMI</div><div style={{marginLeft:'auto'}}>{fmt(derived.pmiMonthly)}</div></div>
-              <div className="row"><div>Property taxes</div><div style={{marginLeft:'auto'}}>{fmt(derived.propertyTaxMonthly)}</div></div>
-              <div className="row"><div>Homeowners insurance</div><div style={{marginLeft:'auto'}}>{fmt(derived.insuranceMonthly)}</div></div>
-              <div className="row"><div>HOA</div><div style={{marginLeft:'auto'}}>{fmt(derived.hoaMonthly)}</div></div>
+              <div className="result-line"><div>Principal &amp; Interest</div><div>{fmt(derived.monthlyPI)}</div></div>
+              <div className="result-line"><div>PMI</div><div>{fmt(derived.pmiMonthly)}</div></div>
+              <div className="result-line"><div>Property taxes</div><div>{fmt(derived.propertyTaxMonthly)}</div></div>
+              <div className="result-line"><div>Homeowners insurance</div><div>{fmt(derived.insuranceMonthly)}</div></div>
+              <div className="result-line"><div>HOA</div><div>{fmt(derived.hoaMonthly)}</div></div>
               {derived.extraPrincipal > 0 && (
-                <div className="row"><div>Extra principal</div><div style={{marginLeft:'auto'}}>{fmt(derived.extraPrincipal)}</div></div>
+                <div className="result-line"><div>Extra principal</div><div>{fmt(derived.extraPrincipal)}</div></div>
               )}
 
               <hr />

@@ -90,11 +90,35 @@ export default function Home() {
       </section>
 
       <section className="content-block trust-band">
-        <h3>Principles</h3>
+        <h3>Our Commitments</h3>
         <div className="grid">
-          <div className="card"><div className="row"><span className="icon-badge"><FontAwesomeIcon icon={faBookOpen} /></span><h4>Education-first</h4></div></div>
-          <div className="card"><div className="row"><span className="icon-badge"><FontAwesomeIcon icon={faEye} /></span><h4>Transparency</h4></div></div>
-          <div className="card"><div className="row"><span className="icon-badge"><FontAwesomeIcon icon={faSmile} /></span><h4>No-pressure guidance</h4></div></div>
+          <div className="card">
+            <div className="feature">
+              <span className="icon-badge"><FontAwesomeIcon icon={faBookOpen} /></span>
+              <div className="text-stack">
+                <h4>Education first</h4>
+                <p className="muted">We explain the why behind every decision, not just the numbers.</p>
+              </div>
+            </div>
+          </div>
+          <div className="card">
+            <div className="feature">
+              <span className="icon-badge"><FontAwesomeIcon icon={faEye} /></span>
+              <div className="text-stack">
+                <h4>Transparent by default</h4>
+                <p className="muted">No hidden assumptions, no unclear calculations, no surprises.</p>
+              </div>
+            </div>
+          </div>
+          <div className="card">
+            <div className="feature">
+              <span className="icon-badge"><FontAwesomeIcon icon={faSmile} /></span>
+              <div className="text-stack">
+                <h4>No pressure, ever</h4>
+                <p className="muted">We provide guidance, not sales tactics or urgency.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

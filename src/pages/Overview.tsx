@@ -30,7 +30,7 @@ export default function Overview() {
               <li>Estimate monthly total cost</li>
               <li>Education: terminology &amp; next steps</li>
             </ul>
-            <div><a className="btn" href="/cost-calculator">Estimate cost</a></div>
+
           </div>
           <div className="card">
             <div className="row"><span className="icon-badge"><FontAwesomeIcon icon={faHome} /></span><h3>Buying</h3></div>
