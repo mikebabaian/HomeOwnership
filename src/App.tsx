@@ -23,7 +23,7 @@ export default function App() {
               <div className="brand-main">Steward</div>
             </div>
           </Link>
-          <div className="brand-tagline">A trusted, helpful guide</div>
+          <div className="brand-tagline">Clear guidance for confident home decisions.</div>
         </div>
       </div>
 

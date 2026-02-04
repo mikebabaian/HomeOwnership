@@ -10,9 +10,15 @@ export default function Home() {
       <section className="hero">
         <div className="meta">
           <h1>Home Owner Steward</h1>
-          <p className="muted">A guided companion for buying, owning, and improving a home.</p>
+  <p class="hero-tagline">
+    A guided companion for buying, owning, and improving a home.
+  </p>
+
+  <p class="hero-description">
+    Understand the true costs, compare your options, and make confident decisions at every stage of homeownership, from first offer to long-term upkeep.
+  </p>
           <div>
-            <Link className="btn btn-primary" to="/cost-calculator">Estimate Monthly Cost</Link>
+            <Link className="btn btn-primary" to="/cost-calculator">Estimate Home Payment</Link>
             <a className="btn btn-ghost" href="#how-it-works" style={{marginLeft:8}}>How it works</a>
           </div>
         </div>
@@ -26,34 +32,59 @@ export default function Home() {
         <p className="muted">Practical tools and clear explanations to plan, buy, and steward your home.</p>
         <div className="grid">
           <div className="card">
-            <div className="row"><span className="icon-badge"><FontAwesomeIcon icon={faHome} /></span><h4>Save for a Home</h4></div>
-            <p className="muted">Set goals and track what you'll need for down payment and closing.</p>
+            <div className="feature">
+              <span className="icon-badge"><FontAwesomeIcon icon={faHome} /></span>
+              <div className="text-stack">
+                <h4>Save for a Home</h4>
+                <p className="muted">Set goals and track what you'll need for down payment and closing.</p>
+              </div>
+            </div>
           </div>
           <div className="card">
-            <div className="row"><span className="icon-badge"><FontAwesomeIcon icon={faClock} /></span><h4>Understand Total Cost</h4></div>
-            <p className="muted">See your true monthly cost, not just the mortgage payment.</p>
+            <div className="feature">
+              <span className="icon-badge"><FontAwesomeIcon icon={faClock} /></span>
+              <div className="text-stack">
+                <h4>Understand Total Cost</h4>
+                <p className="muted">See your true monthly cost, not just the mortgage payment.</p>
+              </div>
+            </div>
           </div>
           <div className="card">
-            <div className="row"><span className="icon-badge"><FontAwesomeIcon icon={faWrench} /></span><h4>Maintain Your Home</h4></div>
-            <p className="muted">Stay ahead of upkeep with simple checklists and reminders.</p>
+            <div className="feature">
+              <span className="icon-badge"><FontAwesomeIcon icon={faWrench} /></span>
+              <div className="text-stack">
+                <h4>Maintain Your Home</h4>
+                <p className="muted">Stay ahead of upkeep with simple checklists and reminders.</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       <section id="how-it-works" className="content-block">
-        <h2>How it works</h2>
+        <h2>How It Works</h2>
+        <p className="muted">Simple steps to guide you through each stage of homeownership.</p>
         <div className="steps">
           <div className="step">
-            <h4><span className="icon-badge"><FontAwesomeIcon icon={faCalendar} /></span> Plan</h4>
-            <p className="muted">Estimate costs, build a savings plan, and learn the basics.</p>
+            <span className="icon-badge"><FontAwesomeIcon icon={faCalendar} /></span>
+            <div className="text-stack">
+              <h4>Plan</h4>
+              <p className="muted">Estimate costs, build a savings plan, and learn the basics.</p>
+            </div>
           </div>
           <div className="step">
-            <h4><span className="icon-badge"><FontAwesomeIcon icon={faKey} /></span> Purchase</h4>
-            <p className="muted">Find support, compare options, and avoid surprises.</p>
+            <span className="icon-badge"><FontAwesomeIcon icon={faKey} /></span>
+            <div className="text-stack">
+              <h4>Purchase</h4>
+              <p className="muted">Find support, compare options, and avoid surprises.</p>
+            </div>
           </div>
           <div className="step">
-            <h4><span className="icon-badge"><FontAwesomeIcon icon={faWrench} /></span> Steward</h4>
-            <p className="muted">Follow maintenance routines and improve wisely.</p>
+            <span className="icon-badge"><FontAwesomeIcon icon={faWrench} /></span>
+            <div className="text-stack">
+              <h4>Steward</h4>
+              <p className="muted">Follow maintenance routines and improve wisely.</p>
+            </div>
           </div>
         </div>
       </section>

@@ -1,3 +1,4 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
 
 :root {
@@ -162,10 +163,12 @@ article, section { background: transparent; padding: 0; box-shadow: none }
   border-radius: 10px;
   background: var(--hos-primary);
   color: #ffffff;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  vertical-align: middle;
+  margin-right: 12px;
 }
 .icon-badge svg { width: 22px; height: 22px }
 
@@ -237,18 +240,39 @@ h3 { font-size: 1.125rem }
 .step {
   display: flex;
   gap: 12px;
-  align-items: flex-start;
+  align-items: center;
   background: var(--surface);
   padding: 16px;
   border-radius: 12px;
   border: 1px solid var(--hos-border);
   box-shadow: var(--hos-shadow-sm);
 }
+.step .icon-badge {
+  flex-shrink: 0;
+}
+.step .text-stack {
+  flex: 1;
+}
 .step h4 {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  margin: 0 0 4px 0;
   font-size: 1rem;
 }
-.step p { margin: 6px 0 0 0; color: var(--muted); flex: 1 }
+.step p { margin: 0; color: var(--muted); }
+
+/* What you get - feature cards */
+.feature {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.feature .icon-badge {
+  flex-shrink: 0;
+}
+.feature .text-stack {
+  flex: 1;
+}
+.feature h4 {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+}
+.feature p { margin: 0; color: var(--muted); }
