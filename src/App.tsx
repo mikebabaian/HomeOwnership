@@ -7,6 +7,8 @@ import CostCalculator from './pages/CostCalculator'
 import Guide from './pages/Guide'
 import Community from './pages/Community'
 import MarketRates from './pages/MarketRates'
+import Register from './pages/Register'
+import SignIn from './pages/SignIn'
 
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -44,7 +46,8 @@ export default function App() {
             <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/best-market-mortgage-rates" onClick={() => setMobileMenuOpen(false)}>Best Market Rates</NavLink>
           </nav>
           <div className="nav-actions">
-            <Link className="btn btn-primary" to="/cost-calculator">Open Calculator</Link>
+            <Link className="btn btn-primary" to="/register">Register</Link>
+            <Link className="btn btn-secondary" to="/sign-in" style={{marginLeft: '0.5rem'}}>Sign In</Link>
           </div>
         </div>
       </div>
@@ -61,6 +64,8 @@ export default function App() {
             <Route path="/guide" element={<Guide />} />
             <Route path="/community" element={<Community />} />
             <Route path="/best-market-mortgage-rates" element={<MarketRates />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/sign-in" element={<SignIn />} />
           </Routes>
         </main>
       </div>
