@@ -41,8 +41,6 @@ export default function App() {
             <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/" onClick={() => setMobileMenuOpen(false)}>Home</NavLink>
             <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/services" onClick={() => setMobileMenuOpen(false)}>Services</NavLink>
             <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/cost-calculator" onClick={() => setMobileMenuOpen(false)}>Cost Calculator</NavLink>
-            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/guide" onClick={() => setMobileMenuOpen(false)}>Guide</NavLink>
-            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/community" onClick={() => setMobileMenuOpen(false)}>Community</NavLink>
             <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/best-market-mortgage-rates" onClick={() => setMobileMenuOpen(false)}>Best Market Rates</NavLink>
           </nav>
           <div className="nav-actions">
