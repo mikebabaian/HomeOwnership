@@ -30,11 +30,11 @@ jobs:
 
       - name: Restore
         run: |
-          dotnet restore api/HomeOwnership.Api/HomeOwnership.Api.csproj
-          dotnet restore api/HomeOwnership.Api.Tests/HomeOwnership.Api.Tests.csproj
+          dotnet restore "${{ github.workspace }}/api/HomeOwnership.Api/HomeOwnership.Api.csproj"
+          dotnet restore "${{ github.workspace }}/api/HomeOwnership.Api.Tests/HomeOwnership.Api.Tests.csproj"
 
       - name: Test
-        run: dotnet test api/HomeOwnership.Api.Tests/HomeOwnership.Api.Tests.csproj --no-restore --verbosity normal
+        run: dotnet test "${{ github.workspace }}/api/HomeOwnership.Api.Tests/HomeOwnership.Api.Tests.csproj" --no-restore --verbosity normal
 
   # ── 2. Build frontend + API, then deploy ───────────────────────────────────
   build-and-deploy:
@@ -75,15 +75,19 @@ jobs:
           mkdir -p api/HomeOwnership.Api/wwwroot
           cp -r dist/. api/HomeOwnership.Api/wwwroot/
 
+      - name: Restore .NET API
+        run: dotnet restore "${{ github.workspace }}/api/HomeOwnership.Api/HomeOwnership.Api.csproj"
+
       - name: Publish .NET API (includes wwwroot)
-        run: >
-          dotnet publish api/HomeOwnership.Api/HomeOwnership.Api.csproj
-          --configuration Release
-          --output publish/
+        run: |
+          dotnet publish "${{ github.workspace }}/api/HomeOwnership.Api/HomeOwnership.Api.csproj" \
+            --configuration Release \
+            --no-restore \
+            --output "${{ github.workspace }}/publish"
 
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: publish/
+          package: ${{ github.workspace }}/publish
