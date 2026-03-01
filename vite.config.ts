@@ -22,5 +22,16 @@ export default defineConfig({
       }
     })
   ],
-  server: { port: 5173 }
+  server: {
+    port: 5173,
+    proxy: {
+      // Forward /api requests to the .NET backend during local development.
+      // Start the API with: dotnet run --project api/HomeOwnership.Api
+      '/api': {
+        target: 'http://localhost:5238',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 })

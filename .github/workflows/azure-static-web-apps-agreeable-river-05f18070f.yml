@@ -10,50 +10,78 @@ on:
       - main
 
 env:
-  AZURE_WEBAPP_NAME: messiah-own-well   # Azure App Service name
+  AZURE_WEBAPP_NAME: messiah-own-well
   NODE_VERSION: '18.x'
+  DOTNET_VERSION: '10.x'
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    name: Build
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
 
-      - name: Set up Node.js
+  # ── 1. .NET tests ──────────────────────────────────────────────────────────
+  test-api:
+    runs-on: ubuntu-latest
+    name: Test .NET API
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore api/HomeOwnership.slnx
+
+      - name: Test
+        run: dotnet test api/HomeOwnership.slnx --no-restore --verbosity normal
+
+  # ── 2. Build frontend + API, then deploy ───────────────────────────────────
+  build-and-deploy:
+    needs: test-api
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Build & Deploy
+
+    steps:
+      - uses: actions/checkout@v3
+
+      # Node / React build
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install frontend dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build React frontend
         run: npm run build
 
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: dist
-          path: dist/
+      # Remove the SPA web.config — .NET handles routing via MapFallbackToFile
+      - name: Remove static web.config from dist
+        run: rm -f dist/web.config
 
-  deploy:
-    needs: build
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
-    runs-on: ubuntu-latest
-    name: Deploy to App Service
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v3
+      # .NET build
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
         with:
-          name: dist
-          path: dist/
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # Copy React output into the .NET wwwroot so it's served by the API host
+      - name: Copy React build into API wwwroot
+        run: |
+          mkdir -p api/HomeOwnership.Api/wwwroot
+          cp -r dist/. api/HomeOwnership.Api/wwwroot/
+
+      - name: Publish .NET API (includes wwwroot)
+        run: >
+          dotnet publish api/HomeOwnership.Api/HomeOwnership.Api.csproj
+          --configuration Release
+          --output publish/
 
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: dist/
+          package: publish/

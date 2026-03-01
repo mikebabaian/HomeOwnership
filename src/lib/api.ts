@@ -1,0 +1,91 @@
+/**
+ * Lightweight API client for HomeOwnership.Api.
+ *
+ * Base URL is controlled by the VITE_API_URL env variable.
+ * In development, set VITE_API_URL in .env.local or use the Vite proxy (see vite.config.ts).
+ * In production the React app is served by the .NET host, so /api routes work with no config.
+ */
+
+const BASE = import.meta.env.VITE_API_URL ?? '/api';
+
+// ── Types ──────────────────────────────────────────────────────────────────
+
+export interface HealthResponse {
+  status: string;
+  timestamp: string;
+}
+
+export interface VersionResponse {
+  version: string;
+  environment: string;
+}
+
+export interface AuthRegisterResponse {
+  userId: string;
+}
+
+export interface AuthLoginResponse {
+  token: string;
+  userId: string;
+}
+
+export interface MeResponse {
+  userId: string;
+  email: string;
+}
+
+// ── Core fetch wrapper ─────────────────────────────────────────────────────
+
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const token = localStorage.getItem('auth_token');
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(options.headers as Record<string, string>),
+  };
+
+  const res = await fetch(`${BASE}${path}`, { ...options, headers });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ message: res.statusText }));
+    throw new Error(body?.message ?? `HTTP ${res.status}`);
+  }
+
+  return res.json() as Promise<T>;
+}
+
+// ── API surface ────────────────────────────────────────────────────────────
+
+export const api = {
+  /** GET /api/health */
+  health: () => request<HealthResponse>('/health'),
+
+  /** GET /api/version */
+  version: () => request<VersionResponse>('/version'),
+
+  auth: {
+    /** POST /api/auth/register */
+    register: (email: string, password: string) =>
+      request<AuthRegisterResponse>('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      }),
+
+    /** POST /api/auth/login — stores JWT in localStorage on success */
+    login: async (email: string, password: string): Promise<AuthLoginResponse> => {
+      const data = await request<AuthLoginResponse>('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      });
+      localStorage.setItem('auth_token', data.token);
+      return data;
+    },
+
+    /** GET /api/auth/me — requires a valid JWT */
+    me: () => request<MeResponse>('/auth/me'),
+
+    /** Remove the stored JWT */
+    logout: () => localStorage.removeItem('auth_token'),
+  },
+};

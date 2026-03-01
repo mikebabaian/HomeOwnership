@@ -1,3 +1,6 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
 /* Register card full width utility */
 .register-fullwidth-card {
   width: 100%;
@@ -257,8 +260,6 @@
   background: var(--hos-green);
   border-radius: 2px;
 }
-@import 'bootstrap/dist/css/bootstrap.min.css';
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
 
 :root {
   /* tokens from polish.md */
