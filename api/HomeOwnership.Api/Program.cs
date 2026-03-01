@@ -33,6 +33,7 @@ builder.Services.AddIdentityCore<IdentityUser>(options =>
 // ── JWT Authentication ─────────────────────────────────────────────────────
 // Options are configured via IConfiguration injected at DI-resolution time
 // (not captured eagerly) so test factories can override config correctly.
+// If Jwt:Key is missing, auth endpoints won't work but the site still loads.
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer();
 
@@ -41,7 +42,11 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
     {
         var key = config["Jwt:Key"];
         if (string.IsNullOrEmpty(key))
-            throw new InvalidOperationException("Jwt:Key is not configured.");
+        {
+            Console.WriteLine("WARNING: Jwt:Key is not configured. Auth endpoints will not work.");
+            Console.WriteLine("Set the Jwt__Key environment variable (or App Setting in Azure) to enable authentication.");
+            return; // Skip JWT config — site still serves, auth fails gracefully
+        }
 
         options.TokenValidationParameters = new TokenValidationParameters
         {
