@@ -49,6 +49,10 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({ message: res.statusText }));
+    // ASP.NET Identity returns { errors: ["desc1", "desc2", …] }
+    if (body?.errors && Array.isArray(body.errors)) {
+      throw new Error(body.errors.join(' '));
+    }
     throw new Error(body?.message ?? `HTTP ${res.status}`);
   }
 

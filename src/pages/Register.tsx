@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 interface FormData {
   fullName: string;
@@ -33,6 +35,10 @@ export default function Register() {
   const [errors, setErrors] = useState<Errors>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [apiError, setApiError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const { register } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -58,14 +64,20 @@ export default function Register() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validate()) {
-      // TODO: API integration
-      // TODO: Password strength meter
-      // TODO: Address auto-complete
-      // TODO: Terms & Conditions checkbox
-      alert('Account created! (Demo only)');
+    setApiError('');
+    if (!validate()) return;
+
+    setSubmitting(true);
+    try {
+      await register(formData.email, formData.password);
+      // Registration succeeded — send them to sign-in
+      navigate('/sign-in', { state: { registered: true } });
+    } catch (err: any) {
+      setApiError(err?.message ?? 'Registration failed. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -75,6 +87,9 @@ export default function Register() {
         <div style={{ width: '100%' }}>
           <h2 style={{ marginBottom: 8 }}>Create Your Account</h2>
           <p className="muted" style={{ marginBottom: 24 }}>Enter your information below to create an account.</p>
+          {apiError && (
+            <div className="alert alert-danger" style={{ marginBottom: 16 }}>{apiError}</div>
+          )}
           <form onSubmit={handleSubmit} noValidate className="register-grid-form">
             <div className="register-grid">
               <div className="register-col">
@@ -218,7 +233,9 @@ export default function Register() {
                 {errors.confirmPassword && <div className="muted" style={{ color: '#b91c1c', marginTop: 2 }}>{errors.confirmPassword}</div>}
               </div>
             </div>
-            <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: 12 }}>Create Account</button>
+            <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: 12 }} disabled={submitting}>
+              {submitting ? 'Creating Account…' : 'Create Account'}
+            </button>
           </form>
           <div style={{ marginTop: 18, textAlign: 'center', fontSize: 15 }}>
             Already have an account?{' '}

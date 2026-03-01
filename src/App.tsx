@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Routes, Route, NavLink, Link } from 'react-router-dom'
+import { Routes, Route, NavLink, Link, useNavigate } from 'react-router-dom'
+import { useAuth } from './context/AuthContext'
 import LogoImg from './images/icon-rounded-512.png'
 import Home from './pages/Home'
 import Overview from './pages/Overview'
@@ -12,6 +13,8 @@ import SignIn from './pages/SignIn'
 
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { user, loading, logout } = useAuth()
+  const navigate = useNavigate()
 
   return (
     <div>
@@ -46,8 +49,17 @@ export default function App() {
             <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/best-market-mortgage-rates" onClick={() => setMobileMenuOpen(false)}>Best Market Rates</NavLink>
           </nav>
           <div className="nav-actions">
-            <Link className="btn btn-primary" to="/register">Register</Link>
-            <Link className="btn btn-secondary" to="/sign-in" style={{marginLeft: '0.5rem'}}>Sign In</Link>
+            {loading ? null : user ? (
+              <>
+                <span className="nav-user-email" style={{ color: '#fff', fontSize: '0.9rem', marginRight: '0.5rem' }}>{user.email}</span>
+                <button className="btn btn-secondary" onClick={() => { logout(); navigate('/'); }}>Sign Out</button>
+              </>
+            ) : (
+              <>
+                <Link className="btn btn-primary" to="/register">Register</Link>
+                <Link className="btn btn-secondary" to="/sign-in" style={{marginLeft: '0.5rem'}}>Sign In</Link>
+              </>
+            )}
           </div>
         </div>
       </div>
