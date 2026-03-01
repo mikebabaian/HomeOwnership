@@ -42,6 +42,9 @@ jobs:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build & Deploy
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
       - uses: actions/checkout@v3
@@ -85,12 +88,16 @@ jobs:
             --no-restore \
             --output "${{ github.workspace }}/publish"
 
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_DE39DA16860B4697A279590FAC82AB46 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7893E731FE1646E9A7D7C250CC7DCA62 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_82EACBBF6E1F4A30B5CAA427BA0D4D34 }}
+
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v3
-        env:
-          SCM_DO_BUILD_DURING_DEPLOYMENT: false
-          ENABLE_ORYX_BUILD: false
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          slot-name: 'Production'
           package: ${{ github.workspace }}/publish
