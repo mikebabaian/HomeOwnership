@@ -59,3 +59,4 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 node_modules
+/api/HomeOwnership.Api/appsettings.Development.json
