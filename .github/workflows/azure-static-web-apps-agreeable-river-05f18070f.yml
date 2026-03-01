@@ -12,7 +12,7 @@ on:
 env:
   AZURE_WEBAPP_NAME: messiah-own-well
   NODE_VERSION: '18.x'
-  DOTNET_VERSION: '10.x'
+  DOTNET_VERSION: '10.0.x'
 
 jobs:
 
@@ -29,10 +29,12 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore
-        run: dotnet restore api/HomeOwnership.slnx
+        run: |
+          dotnet restore api/HomeOwnership.Api/HomeOwnership.Api.csproj
+          dotnet restore api/HomeOwnership.Api.Tests/HomeOwnership.Api.Tests.csproj
 
       - name: Test
-        run: dotnet test api/HomeOwnership.slnx --no-restore --verbosity normal
+        run: dotnet test api/HomeOwnership.Api.Tests/HomeOwnership.Api.Tests.csproj --no-restore --verbosity normal
 
   # ── 2. Build frontend + API, then deploy ───────────────────────────────────
   build-and-deploy:
