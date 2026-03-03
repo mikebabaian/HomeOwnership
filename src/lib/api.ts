@@ -91,6 +91,31 @@ export interface DashboardSummaryResponse {
   expenseByCategory: CategoryTotal[];
 }
 
+export interface ThreadSummaryDto {
+  id: number;
+  title: string;
+  createdUtc: string;
+  updatedUtc: string;
+  createdByDisplayName: string;
+  replyCount: number;
+  lastPostUtc: string | null;
+}
+
+export interface PostDto {
+  id: number;
+  body: string;
+  createdUtc: string;
+  createdByDisplayName: string;
+}
+
+export interface ThreadDetailDto {
+  id: number;
+  title: string;
+  createdUtc: string;
+  createdByDisplayName: string;
+  posts: PostDto[];
+}
+
 // ── Core fetch wrapper ─────────────────────────────────────────────────────
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -188,5 +213,28 @@ export const api = {
   dashboard: {
     /** GET /api/dashboard/summary */
     summary: () => request<DashboardSummaryResponse>('/dashboard/summary'),
+  },
+
+  community: {
+    /** GET /api/community/threads */
+    threads: (page = 1, pageSize = 20) =>
+      request<ThreadSummaryDto[]>(`/community/threads?page=${page}&pageSize=${pageSize}`),
+
+    /** GET /api/community/threads/:id */
+    thread: (id: number) => request<ThreadDetailDto>(`/community/threads/${id}`),
+
+    /** POST /api/community/threads */
+    createThread: (title: string, body: string) =>
+      request<ThreadSummaryDto>('/community/threads', {
+        method: 'POST',
+        body: JSON.stringify({ title, body }),
+      }),
+
+    /** POST /api/community/threads/:id/posts */
+    createPost: (threadId: number, body: string) =>
+      request<PostDto>(`/community/threads/${threadId}/posts`, {
+        method: 'POST',
+        body: JSON.stringify({ body }),
+      }),
   },
 };
