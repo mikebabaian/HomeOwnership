@@ -95,6 +95,7 @@ app.UseStaticFiles();
 app.MapHealthEndpoints();
 app.MapVersionEndpoints();
 app.MapAuthEndpoints();
+app.MapProfileEndpoints();
 
 // SPA fallback – send all unmatched routes to index.html
 app.MapFallbackToFile("index.html");

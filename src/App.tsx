@@ -13,6 +13,7 @@ import Register from './pages/Register'
 import SignIn from './pages/SignIn'
 import Dashboard from './pages/Dashboard'
 import Budget from './pages/Budget'
+import Profile from './pages/Profile'
 
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -51,6 +52,7 @@ export default function App() {
                 <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/dashboard" onClick={() => setMobileMenuOpen(false)}>Dashboard</NavLink>
                 <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/community" onClick={() => setMobileMenuOpen(false)}>Community</NavLink>
                 <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/budget" onClick={() => setMobileMenuOpen(false)}>Budget</NavLink>
+                <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/profile" onClick={() => setMobileMenuOpen(false)}>Profile</NavLink>
               </>
             ) : (
               <>
@@ -97,6 +99,7 @@ export default function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/community" element={<Community />} />
               <Route path="/budget" element={<Budget />} />
+              <Route path="/profile" element={<Profile />} />
             </Route>
           </Routes>
         </main>

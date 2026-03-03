@@ -34,6 +34,22 @@ export interface MeResponse {
   email: string;
 }
 
+export interface ProfileResponse {
+  messageBoardUserName: string | null;
+  currentMortgageRate: number | null;
+  homeOwnersInsuranceMonthly: number | null;
+  monthlyTakeHome: number | null;
+  currentMortgageBalance: number | null;
+}
+
+export interface UpsertProfileRequest {
+  messageBoardUserName?: string | null;
+  currentMortgageRate?: number | null;
+  homeOwnersInsuranceMonthly?: number | null;
+  monthlyTakeHome?: number | null;
+  currentMortgageBalance?: number | null;
+}
+
 // ── Core fetch wrapper ─────────────────────────────────────────────────────
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -91,5 +107,17 @@ export const api = {
 
     /** Remove the stored JWT */
     logout: () => localStorage.removeItem('auth_token'),
+  },
+
+  profile: {
+    /** GET /api/profile */
+    get: () => request<ProfileResponse>('/profile'),
+
+    /** PUT /api/profile (upsert) */
+    save: (data: UpsertProfileRequest) =>
+      request<ProfileResponse>('/profile', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
   },
 };
