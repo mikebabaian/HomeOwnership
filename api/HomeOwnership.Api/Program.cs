@@ -96,6 +96,7 @@ app.MapHealthEndpoints();
 app.MapVersionEndpoints();
 app.MapAuthEndpoints();
 app.MapProfileEndpoints();
+app.MapBudgetEndpoints();
 
 // SPA fallback – send all unmatched routes to index.html
 app.MapFallbackToFile("index.html");

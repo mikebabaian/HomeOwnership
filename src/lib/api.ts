@@ -50,6 +50,31 @@ export interface UpsertProfileRequest {
   currentMortgageBalance?: number | null;
 }
 
+export interface BudgetItemDto {
+  id: number;
+  category: string;
+  name: string;
+  amount: number;
+  notes: string | null;
+  sortOrder: number;
+}
+
+export interface CreateBudgetItemRequest {
+  category: string;
+  name: string;
+  amount: number;
+  notes?: string | null;
+  sortOrder?: number;
+}
+
+export interface UpdateBudgetItemRequest {
+  category: string;
+  name: string;
+  amount: number;
+  notes?: string | null;
+  sortOrder?: number;
+}
+
 // ── Core fetch wrapper ─────────────────────────────────────────────────────
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -119,5 +144,28 @@ export const api = {
         method: 'PUT',
         body: JSON.stringify(data),
       }),
+  },
+
+  budget: {
+    /** GET /api/budget/items */
+    list: () => request<BudgetItemDto[]>('/budget/items'),
+
+    /** POST /api/budget/items */
+    create: (data: CreateBudgetItemRequest) =>
+      request<BudgetItemDto>('/budget/items', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+
+    /** PUT /api/budget/items/:id */
+    update: (id: number, data: UpdateBudgetItemRequest) =>
+      request<BudgetItemDto>(`/budget/items/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
+
+    /** DELETE /api/budget/items/:id */
+    remove: (id: number) =>
+      request<void>(`/budget/items/${id}`, { method: 'DELETE' }),
   },
 };

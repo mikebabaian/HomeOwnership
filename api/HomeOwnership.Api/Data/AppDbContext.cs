@@ -9,6 +9,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     : IdentityDbContext<IdentityUser>(options)
 {
     public DbSet<UserProfile> UserProfiles => Set<UserProfile>();
+    public DbSet<BudgetItem> BudgetItems => Set<BudgetItem>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -21,6 +22,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             entity.Property(e => e.HomeOwnersInsuranceMonthly).HasColumnType("decimal(10,2)");
             entity.Property(e => e.MonthlyTakeHome).HasColumnType("decimal(10,2)");
             entity.Property(e => e.CurrentMortgageBalance).HasColumnType("decimal(12,2)");
+        });
+
+        builder.Entity<BudgetItem>(entity =>
+        {
+            entity.HasIndex(e => e.UserId);
+            entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
         });
     }
 }
