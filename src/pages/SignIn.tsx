@@ -28,7 +28,9 @@ export default function SignIn() {
     setSubmitting(true);
     try {
       await login(email, password);
-      navigate('/');
+      // Redirect to the page they were trying to visit, or Dashboard by default
+      const from = (location.state as any)?.from?.pathname ?? '/dashboard';
+      navigate(from, { replace: true });
     } catch (err: any) {
       setError(err?.message ?? 'Invalid email or password.');
     } finally {

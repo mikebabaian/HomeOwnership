@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Routes, Route, NavLink, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
+import ProtectedRoute from './components/ProtectedRoute'
 import LogoImg from './images/icon-rounded-512.png'
 import Home from './pages/Home'
 import Overview from './pages/Overview'
@@ -10,6 +11,8 @@ import Community from './pages/Community'
 import MarketRates from './pages/MarketRates'
 import Register from './pages/Register'
 import SignIn from './pages/SignIn'
+import Dashboard from './pages/Dashboard'
+import Budget from './pages/Budget'
 
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -43,10 +46,20 @@ export default function App() {
             <span></span>
           </button>
           <nav className={`nav-left ${mobileMenuOpen ? 'open' : ''}`}>
-            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/" onClick={() => setMobileMenuOpen(false)}>Home</NavLink>
-            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/services" onClick={() => setMobileMenuOpen(false)}>Services</NavLink>
-            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/cost-calculator" onClick={() => setMobileMenuOpen(false)}>Cost Calculator</NavLink>
-            <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/best-market-mortgage-rates" onClick={() => setMobileMenuOpen(false)}>Best Market Rates</NavLink>
+            {user ? (
+              <>
+                <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/dashboard" onClick={() => setMobileMenuOpen(false)}>Dashboard</NavLink>
+                <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/community" onClick={() => setMobileMenuOpen(false)}>Community</NavLink>
+                <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/budget" onClick={() => setMobileMenuOpen(false)}>Budget</NavLink>
+              </>
+            ) : (
+              <>
+                <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/" onClick={() => setMobileMenuOpen(false)}>Home</NavLink>
+                <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/services" onClick={() => setMobileMenuOpen(false)}>Services</NavLink>
+                <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/cost-calculator" onClick={() => setMobileMenuOpen(false)}>Cost Calculator</NavLink>
+                <NavLink className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'} to="/best-market-mortgage-rates" onClick={() => setMobileMenuOpen(false)}>Best Market Rates</NavLink>
+              </>
+            )}
           </nav>
           <div className="nav-actions">
             {loading ? null : user ? (
@@ -70,14 +83,21 @@ export default function App() {
       <div className="container app-root">
         <main>
           <Routes>
+            {/* Public routes */}
             <Route path="/" element={<Home />} />
             <Route path="/services" element={<Overview />} />
             <Route path="/cost-calculator" element={<CostCalculator />} />
             <Route path="/guide" element={<Guide />} />
-            <Route path="/community" element={<Community />} />
             <Route path="/best-market-mortgage-rates" element={<MarketRates />} />
             <Route path="/register" element={<Register />} />
             <Route path="/sign-in" element={<SignIn />} />
+
+            {/* Protected routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/community" element={<Community />} />
+              <Route path="/budget" element={<Budget />} />
+            </Route>
           </Routes>
         </main>
       </div>
