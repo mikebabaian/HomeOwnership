@@ -72,18 +72,18 @@ export default function Profile() {
 
   return (
     <div className="content-block">
-      <div style={{ maxWidth: 520, margin: '0 auto' }}>
-        <h2 style={{ marginBottom: 8 }}>Your Profile</h2>
-        <p className="muted" style={{ marginBottom: 24 }}>
-          Manage your personal details and financial snapshot.
-        </p>
+      <h2 style={{ marginBottom: 8 }}>Your Profile</h2>
+      <p className="muted" style={{ marginBottom: 24 }}>
+        Manage your personal details and financial snapshot.
+      </p>
 
-        {error && <div className="alert alert-danger" style={{ marginBottom: 16 }}>{error}</div>}
-        {success && <div className="alert alert-success" style={{ marginBottom: 16 }}>{success}</div>}
+      {error && <div className="alert alert-danger" style={{ marginBottom: 16 }}>{error}</div>}
+      {success && <div className="alert alert-success" style={{ marginBottom: 16 }}>{success}</div>}
 
-        <form onSubmit={handleSubmit} noValidate>
+      <form onSubmit={handleSubmit} noValidate>
+        <div className="row g-3">
           {/* Message Board User Name */}
-          <div style={{ marginBottom: 16 }}>
+          <div className="col-5">
             <label htmlFor="profile-username">Message Board User Name</label>
             <input
               id="profile-username"
@@ -104,7 +104,7 @@ export default function Profile() {
           </div>
 
           {/* Current Mortgage Rate */}
-          <div style={{ marginBottom: 16 }}>
+          <div className="col-5">
             <label htmlFor="profile-rate">Current Mortgage Rate (%)</label>
             <input
               id="profile-rate"
@@ -120,7 +120,7 @@ export default function Profile() {
           </div>
 
           {/* Home Owner's Insurance */}
-          <div style={{ marginBottom: 16 }}>
+          <div className="col-5">
             <label htmlFor="profile-insurance">Home Owner's Insurance ($/mo)</label>
             <input
               id="profile-insurance"
@@ -136,7 +136,7 @@ export default function Profile() {
           </div>
 
           {/* Monthly Take Home */}
-          <div style={{ marginBottom: 16 }}>
+          <div className="col-5">
             <label htmlFor="profile-income">Monthly Take Home ($)</label>
             <input
               id="profile-income"
@@ -152,7 +152,7 @@ export default function Profile() {
           </div>
 
           {/* Current Mortgage Balance */}
-          <div style={{ marginBottom: 16 }}>
+          <div className="col-5">
             <label htmlFor="profile-balance">Current Mortgage Balance ($)</label>
             <input
               id="profile-balance"
@@ -166,17 +166,17 @@ export default function Profile() {
               onChange={handleChange}
             />
           </div>
+        </div>
 
-          <button
-            type="submit"
-            className="btn btn-primary"
-            style={{ width: '100%', marginTop: 4 }}
-            disabled={saving}
-          >
-            {saving ? 'Saving…' : 'Save Profile'}
-          </button>
-        </form>
-      </div>
+        <button
+          type="submit"
+          className="btn btn-primary mt-3"
+          style={{ width: '100%' }}
+          disabled={saving}
+        >
+          {saving ? 'Saving…' : 'Save Profile'}
+        </button>
+      </form>
     </div>
   );
 }

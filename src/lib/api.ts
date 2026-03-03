@@ -75,6 +75,22 @@ export interface UpdateBudgetItemRequest {
   sortOrder?: number;
 }
 
+export interface CategoryTotal {
+  category: string;
+  total: number;
+}
+
+export interface DashboardSummaryResponse {
+  profileUpdatedUtc: string | null;
+  currentMortgageRate: number | null;
+  homeOwnersInsuranceMonthly: number | null;
+  monthlyTakeHome: number | null;
+  totalMonthlyExpenses: number;
+  remainingThisMonth: number | null;
+  isInTheRed: boolean;
+  expenseByCategory: CategoryTotal[];
+}
+
 // ── Core fetch wrapper ─────────────────────────────────────────────────────
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -167,5 +183,10 @@ export const api = {
     /** DELETE /api/budget/items/:id */
     remove: (id: number) =>
       request<void>(`/budget/items/${id}`, { method: 'DELETE' }),
+  },
+
+  dashboard: {
+    /** GET /api/dashboard/summary */
+    summary: () => request<DashboardSummaryResponse>('/dashboard/summary'),
   },
 };
