@@ -10,7 +10,7 @@ on:
       - main
 
 env:
-  AZURE_WEBAPP_NAME: ownwellapp
+  AZURE_WEBAPP_NAME: ownwell
   NODE_VERSION: '18.x'
   DOTNET_VERSION: '10.0.x'
 
