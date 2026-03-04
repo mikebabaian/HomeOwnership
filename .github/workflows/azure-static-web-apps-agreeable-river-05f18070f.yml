@@ -10,7 +10,7 @@ on:
       - main
 
 env:
-  AZURE_WEBAPP_NAME: messiah-own-well
+  AZURE_WEBAPP_NAME: ownwellapp
   NODE_VERSION: '18.x'
   DOTNET_VERSION: '10.0.x'
 
