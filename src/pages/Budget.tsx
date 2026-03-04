@@ -148,33 +148,37 @@ export default function Budget() {
       {error && <div className="alert alert-danger" style={{ marginBottom: 16 }}>{error}</div>}
 
       {/* ── Add new item form ──────────────────────────────────────────── */}
-      <form onSubmit={handleAdd} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 20, padding: 16, background: 'var(--hos-panel-bg, #f7faf8)', border: '1px solid var(--hos-border, #d5ddd8)', borderRadius: 8 }}>
-        <div style={{ flex: '0 0 130px' }}>
-          <label htmlFor="add-category" style={{ fontSize: 13 }}>Category</label>
-          <select
-            id="add-category"
-            className="form-control"
-            value={form.category}
-            onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-          >
-            {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
+      <form onSubmit={handleAdd} style={{ marginBottom: 20, padding: 16, background: 'var(--hos-panel-bg, #f7faf8)', border: '1px solid var(--hos-border, #d5ddd8)', borderRadius: 8 }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+          <div style={{ flex: '0 0 130px' }}>
+            <label htmlFor="add-category" style={{ fontSize: 13 }}>Category</label>
+            <select
+              id="add-category"
+              className="form-control"
+              value={form.category}
+              onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
+            >
+              {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+          <div style={{ flex: '1 1 150px' }}>
+            <label htmlFor="add-name" style={{ fontSize: 13 }}>Name</label>
+            <input id="add-name" className="form-control" placeholder="e.g. Electric" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required />
+          </div>
+          <div style={{ flex: '0 0 110px' }}>
+            <label htmlFor="add-amount" style={{ fontSize: 13 }}>Amount ($)</label>
+            <input id="add-amount" className="form-control" type="number" step="0.01" min="0" placeholder="0.00" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} required />
+          </div>
+          <div style={{ flex: '1 1 150px' }}>
+            <label htmlFor="add-notes" style={{ fontSize: 13 }}>Notes</label>
+            <input id="add-notes" className="form-control" placeholder="Optional" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} />
+          </div>
         </div>
-        <div style={{ flex: '1 1 150px' }}>
-          <label htmlFor="add-name" style={{ fontSize: 13 }}>Name</label>
-          <input id="add-name" className="form-control" placeholder="e.g. Electric" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required />
+        <div style={{ marginTop: 10 }}>
+          <button type="submit" className="btn btn-primary btn-sm" disabled={adding}>
+            {adding ? 'Adding…' : 'Add'}
+          </button>
         </div>
-        <div style={{ flex: '0 0 110px' }}>
-          <label htmlFor="add-amount" style={{ fontSize: 13 }}>Amount ($)</label>
-          <input id="add-amount" className="form-control" type="number" step="0.01" min="0" placeholder="0.00" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} required />
-        </div>
-        <div style={{ flex: '1 1 150px' }}>
-          <label htmlFor="add-notes" style={{ fontSize: 13 }}>Notes</label>
-          <input id="add-notes" className="form-control" placeholder="Optional" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} />
-        </div>
-        <button type="submit" className="btn btn-primary" style={{ height: 38 }} disabled={adding}>
-          {adding ? 'Adding…' : 'Add'}
-        </button>
       </form>
 
       {/* ── Items table ────────────────────────────────────────────────── */}

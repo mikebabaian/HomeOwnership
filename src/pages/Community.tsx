@@ -155,7 +155,8 @@ export default function Community() {
                 className="card h-100"
                 style={{
                   cursor: 'pointer',
-                  borderColor: selectedThread?.id === t.id ? 'var(--hos-primary)' : undefined,
+                  backgroundColor: '#f5f6f8',
+                  borderColor: selectedThread?.id === t.id ? 'var(--hos-primary)' : '#d0d4da',
                 }}
                 onClick={() => openThread(t.id)}
                 role="button"
@@ -181,7 +182,7 @@ export default function Community() {
       {showNewThread && !selectedThread && (
         <div className="row justify-content-center mb-3">
           <div className="col-10">
-            <form onSubmit={handleCreateThread} className="card">
+            <form onSubmit={handleCreateThread} className="card" style={{ backgroundColor: '#f5f6f8', borderColor: '#d0d4da' }}>
               <div className="card-body py-2 px-3">
                 <h6 className="mb-2">New Thread</h6>
                 <input
@@ -226,9 +227,9 @@ export default function Community() {
             </small>
 
             {/* Posts */}
-            <div className="d-flex flex-column gap-2 mb-3">
+            <div className="d-flex flex-column gap-2 mb-3" style={{ maxHeight: 400, overflowY: 'auto' }}>
               {selectedThread.posts.map((p) => (
-                <div key={p.id} className="card">
+                <div key={p.id} className="card" style={{ backgroundColor: '#f5f6f8', borderColor: '#d0d4da' }}>
                   <div className="card-body py-2 px-3">
                     <div className="d-flex justify-content-between align-items-center mb-1">
                       <strong style={{ fontSize: '0.9rem' }}>{p.createdByDisplayName}</strong>
@@ -245,7 +246,7 @@ export default function Community() {
               <form onSubmit={handleReply}>
                 <textarea
                   className="form-control mb-2"
-                  rows={3}
+                  rows={2}
                   placeholder="Write a reply…"
                   maxLength={4000}
                   value={replyBody}
