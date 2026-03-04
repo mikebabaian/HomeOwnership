@@ -129,12 +129,12 @@ export default function Dashboard() {
 
       <div className="row g-4 justify-content-center align-items-start">
         {/* ── Left column: Monthly Snapshot (wider) ── */}
-        <div className="col-7">
+        <div className="col-8">
           <div className="snapshot-panel">
             {/* Title + subtitle */}
             <div className="mb-3">
-              <h5 className="fw-semibold mb-1" style={{ color: '#1e293b' }}>Monthly Snapshot</h5>
-              <small style={{ color: '#94a3b8' }}>Breakdown of your monthly cash flow</small>
+              <h5 className="fw-semibold mb-1" style={{ color: '#1e293b', fontSize: '1.3rem' }}>Monthly Snapshot</h5>
+              <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Breakdown of your monthly cash flow</span>
             </div>
 
             {/* Chart + legend */}
@@ -168,11 +168,11 @@ export default function Dashboard() {
                     justifyContent: 'center',
                   }}
                 >
-                  <span style={{ fontSize: '0.6rem', color: '#94a3b8', lineHeight: 1 }}>Remaining</span>
+                  <span style={{ fontSize: '0.72rem', color: '#94a3b8', lineHeight: 1 }}>Remaining</span>
                   <span
                     className="fw-bold"
                     style={{
-                      fontSize: '0.85rem',
+                      fontSize: '1rem',
                       color: data.isInTheRed ? '#dc3545' : '#1a9e5c',
                       lineHeight: 1.3,
                     }}
@@ -199,11 +199,11 @@ export default function Dashboard() {
                             flexShrink: 0,
                           }}
                         />
-                        <span style={{ fontSize: '0.78rem', color: '#334155' }}>{s.label}</span>
+                        <span style={{ fontSize: '0.9rem', color: '#334155' }}>{s.label}</span>
                       </div>
                       <div className="text-end" style={{ marginLeft: 10 }}>
-                        <span className="fw-semibold" style={{ fontSize: '0.78rem', color: '#1e293b' }}>{fmt(s.value)}</span>
-                        <span style={{ fontSize: '0.68rem', color: '#94a3b8', marginLeft: 4 }}>{pct}%</span>
+                        <span className="fw-semibold" style={{ fontSize: '0.9rem', color: '#1e293b' }}>{fmt(s.value)}</span>
+                        <span style={{ fontSize: '0.78rem', color: '#94a3b8', marginLeft: 4 }}>{pct}%</span>
                       </div>
                     </div>
                   );
@@ -214,20 +214,20 @@ export default function Dashboard() {
             {/* Summary metrics */}
             <div className="d-flex justify-content-center gap-4 mt-3 pt-3" style={{ borderTop: '1px solid #f1f5f9' }}>
               <div className="text-center">
-                <small style={{ color: '#94a3b8', display: 'block', fontSize: '0.7rem' }}>Income</small>
-                <span className="fw-semibold" style={{ fontSize: '0.9rem', color: '#1e293b' }}>
+                <small style={{ color: '#94a3b8', display: 'block', fontSize: '0.82rem' }}>Income</small>
+                <span className="fw-semibold" style={{ fontSize: '1.05rem', color: '#1e293b' }}>
                   {data.monthlyTakeHome !== null ? fmt(data.monthlyTakeHome) : '—'}
                 </span>
               </div>
               <div className="text-center">
-                <small style={{ color: '#94a3b8', display: 'block', fontSize: '0.7rem' }}>Expenses</small>
-                <span className="fw-semibold" style={{ fontSize: '0.9rem', color: '#1e293b' }}>{fmt(data.totalMonthlyExpenses)}</span>
+                <small style={{ color: '#94a3b8', display: 'block', fontSize: '0.82rem' }}>Expenses</small>
+                <span className="fw-semibold" style={{ fontSize: '1.05rem', color: '#1e293b' }}>{fmt(data.totalMonthlyExpenses)}</span>
               </div>
               <div className="text-center">
-                <small style={{ color: '#94a3b8', display: 'block', fontSize: '0.7rem' }}>Remaining</small>
+                <small style={{ color: '#94a3b8', display: 'block', fontSize: '0.82rem' }}>Remaining</small>
                 <span
                   className="fw-bold"
-                  style={{ fontSize: '1rem', color: data.isInTheRed ? '#dc3545' : '#1a9e5c' }}
+                  style={{ fontSize: '1.15rem', color: data.isInTheRed ? '#dc3545' : '#1a9e5c' }}
                 >
                   {data.remainingThisMonth !== null ? fmt(data.remainingThisMonth) : '—'}
                 </span>
@@ -281,11 +281,11 @@ export default function Dashboard() {
                 <div className="card-body p-2 d-flex align-items-center justify-content-center">
                   <i className="fa-solid fa-circle-check text-success me-2" style={{ fontSize: '0.9rem' }} />
                   <div>
-                    <small className="text-muted d-block" style={{ fontSize: '0.68rem', lineHeight: 1.1 }}>Mortgage Rate</small>
-                    <span className="fw-semibold" style={{ fontSize: '1.1rem', lineHeight: 1.2 }}>
+                    <small className="text-muted d-block" style={{ fontSize: '0.95rem', lineHeight: 1.2 }}>Mortgage Rate</small>
+                    <span className="fw-semibold" style={{ fontSize: '1.6rem', lineHeight: 1.3 }}>
                       {data.currentMortgageRate !== null ? `${data.currentMortgageRate}%` : '—'}
                     </span>
-                    <small className="text-muted d-block" style={{ fontSize: '0.6rem', lineHeight: 1.1 }}>as of {asOf}</small>
+                    <small className="text-muted d-block" style={{ fontSize: '0.8rem', lineHeight: 1.2 }}>as of {asOf}</small>
                   </div>
                 </div>
               </div>
@@ -293,11 +293,11 @@ export default function Dashboard() {
                 <div className="card-body p-2 d-flex align-items-center justify-content-center">
                   <i className="fa-solid fa-circle-check text-success me-2" style={{ fontSize: '0.9rem' }} />
                   <div>
-                    <small className="text-muted d-block" style={{ fontSize: '0.68rem', lineHeight: 1.1 }}>Homeowner's Insurance</small>
-                    <span className="fw-semibold" style={{ fontSize: '1.1rem', lineHeight: 1.2 }}>
+                    <small className="text-muted d-block" style={{ fontSize: '0.95rem', lineHeight: 1.2 }}>Homeowner's Insurance</small>
+                    <span className="fw-semibold" style={{ fontSize: '1.6rem', lineHeight: 1.3 }}>
                       {data.homeOwnersInsuranceMonthly !== null ? fmt(data.homeOwnersInsuranceMonthly) : '—'}
                     </span>
-                    <small className="text-muted d-block" style={{ fontSize: '0.6rem', lineHeight: 1.1 }}>as of {asOf}</small>
+                    <small className="text-muted d-block" style={{ fontSize: '0.8rem', lineHeight: 1.2 }}>as of {asOf}</small>
                   </div>
                 </div>
               </div>
