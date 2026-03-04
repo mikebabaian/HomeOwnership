@@ -12,6 +12,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<BudgetItem> BudgetItems => Set<BudgetItem>();
     public DbSet<MessageThread> MessageThreads => Set<MessageThread>();
     public DbSet<MessagePost> MessagePosts => Set<MessagePost>();
+    public DbSet<ConciergeMessage> ConciergeMessages => Set<ConciergeMessage>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -45,6 +46,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         builder.Entity<MessagePost>(entity =>
         {
             entity.HasIndex(e => new { e.ThreadId, e.CreatedUtc });
+        });
+
+        builder.Entity<ConciergeMessage>(entity =>
+        {
+            entity.HasIndex(e => new { e.UserId, e.CreatedUtc });
         });
     }
 }

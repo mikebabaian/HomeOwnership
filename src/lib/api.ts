@@ -116,6 +116,21 @@ export interface ThreadDetailDto {
   posts: PostDto[];
 }
 
+export interface ConciergeMessageDto {
+  role: string;
+  content: string;
+  createdUtc: string;
+}
+
+export interface ConciergeHistoryResponse {
+  messages: ConciergeMessageDto[];
+}
+
+export interface ConciergeSendResponse {
+  reply: string;
+  createdUtc: string;
+}
+
 // ── Core fetch wrapper ─────────────────────────────────────────────────────
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -236,5 +251,22 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ body }),
       }),
+  },
+
+  concierge: {
+    /** GET /api/concierge/history */
+    history: (limit = 30) =>
+      request<ConciergeHistoryResponse>(`/concierge/history?limit=${limit}`),
+
+    /** POST /api/concierge/send */
+    send: (message: string) =>
+      request<ConciergeSendResponse>('/concierge/send', {
+        method: 'POST',
+        body: JSON.stringify({ message }),
+      }),
+
+    /** DELETE /api/concierge/history */
+    clear: () =>
+      request<{ deleted: number }>('/concierge/history', { method: 'DELETE' }),
   },
 };

@@ -1,5 +1,6 @@
 using HomeOwnership.Api.Data;
 using HomeOwnership.Api.Endpoints;
+using HomeOwnership.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -76,6 +77,9 @@ builder.Services.AddCors(options =>
 // ── OpenAPI (dev only) ─────────────────────────────────────────────────────
 builder.Services.AddOpenApi();
 
+// ── OpenAI / Concierge ─────────────────────────────────────────────────────
+builder.Services.AddHttpClient<OpenAiChatService>();
+
 var app = builder.Build();
 
 // ── Middleware pipeline ────────────────────────────────────────────────────
@@ -99,6 +103,7 @@ app.MapProfileEndpoints();
 app.MapBudgetEndpoints();
 app.MapDashboardEndpoints();
 app.MapCommunityEndpoints();
+app.MapConciergeEndpoints();
 
 // SPA fallback – send all unmatched routes to index.html
 app.MapFallbackToFile("index.html");

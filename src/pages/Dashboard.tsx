@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { api, DashboardSummaryResponse } from '../lib/api';
+import React, { useEffect, useRef, useState } from 'react';
+import { api, DashboardSummaryResponse, ConciergeMessageDto } from '../lib/api';
 
 /* ---------- helpers ---------- */
 
@@ -56,6 +56,25 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  /* ---- Concierge chat state ---- */
+  const INTRO_MSG: ConciergeMessageDto = {
+    role: 'assistant',
+    content: "Hi! I'm your Home Owner Concierge. What are you trying to do today with your home — save more, manage your budget, plan upkeep, or ask a question?",
+    createdUtc: new Date().toISOString(),
+  };
+  const [chatMessages, setChatMessages] = useState<ConciergeMessageDto[]>([INTRO_MSG]);
+  const [chatInput, setChatInput] = useState('');
+  const [chatSending, setChatSending] = useState(false);
+  const [chatExpanded, setChatExpanded] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatMessagesRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    if (chatMessagesRef.current) {
+      chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
+    }
+  };
+
   useEffect(() => {
     api.dashboard
       .summary()
@@ -63,6 +82,50 @@ export default function Dashboard() {
       .catch(() => setError('Unable to load dashboard data.'))
       .finally(() => setLoading(false));
   }, []);
+
+  /* Load chat history on mount */
+  useEffect(() => {
+    api.concierge.history(50)
+      .then((res) => {
+        if (res.messages.length > 0) setChatMessages(res.messages);
+      })
+      .catch(() => { /* first visit or not logged in — use intro */ });
+  }, []);
+
+  /* Auto-scroll when messages change */
+  useEffect(scrollToBottom, [chatMessages]);
+
+  const handleChatSend = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const msg = chatInput.trim();
+    if (!msg || chatSending) return;
+
+    const userMsg: ConciergeMessageDto = {
+      role: 'user',
+      content: msg,
+      createdUtc: new Date().toISOString(),
+    };
+    setChatMessages((prev) => [...prev, userMsg]);
+    setChatInput('');
+    setChatSending(true);
+
+    try {
+      const res = await api.concierge.send(msg);
+      const assistantMsg: ConciergeMessageDto = {
+        role: 'assistant',
+        content: res.reply,
+        createdUtc: res.createdUtc,
+      };
+      setChatMessages((prev) => [...prev, assistantMsg]);
+    } catch {
+      setChatMessages((prev) => [
+        ...prev,
+        { role: 'assistant', content: 'Sorry, something went wrong. Please try again.', createdUtc: new Date().toISOString() },
+      ]);
+    } finally {
+      setChatSending(false);
+    }
+  };
 
   if (loading) return <div className="content-block"><p>Loading dashboard&hellip;</p></div>;
   if (error) return <div className="content-block"><div className="alert alert-danger">{error}</div></div>;
@@ -118,6 +181,66 @@ export default function Dashboard() {
         .donut-wrap {
           animation: donutFadeIn 0.5s ease-out both;
         }
+        .concierge-panel {
+          background: #fff;
+          border-radius: 20px;
+          box-shadow: 0 6px 24px rgba(11,34,56,0.07);
+          border: 1px solid #edf0f4;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          height: 420px;
+          transition: height 0.3s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+        .concierge-panel.expanded {
+          height: 820px;
+        }
+        .concierge-panel:hover {
+          box-shadow: 0 10px 32px rgba(11,34,56,0.11);
+          transform: translateY(-2px);
+        }
+        .concierge-header {
+          padding: 16px 24px 12px;
+          border-bottom: 1px solid #e2e8f0;
+          background: #f8fafc;
+          border-radius: 20px 20px 0 0;
+        }
+        .concierge-messages {
+          flex: 1;
+          overflow-y: auto;
+          padding: 16px 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .concierge-bubble {
+          max-width: 85%;
+          padding: 10px 14px;
+          border-radius: 14px;
+          font-size: 0.9rem;
+          line-height: 1.45;
+          word-wrap: break-word;
+          white-space: pre-wrap;
+        }
+        .concierge-bubble.user {
+          align-self: flex-end;
+          background: #1e3a5f;
+          color: #fff;
+          border-bottom-right-radius: 4px;
+        }
+        .concierge-bubble.assistant {
+          align-self: flex-start;
+          background: #f1f5f9;
+          color: #1e293b;
+          border-bottom-left-radius: 4px;
+        }
+        .concierge-input-bar {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px 24px 16px;
+          border-top: 1px solid #f1f5f9;
+        }
       `}</style>
 
       {!hasProfile && (
@@ -126,6 +249,79 @@ export default function Dashboard() {
           Complete your <a href="/profile">Profile</a> to see your best-rate cards and income data.
         </div>
       )}
+
+      {/* ── Home Owner Concierge Chat ── */}
+      <div className="row g-4 justify-content-center mb-3">
+        <div className="col-11">
+          <div className={`concierge-panel${chatExpanded ? ' expanded' : ''}`}>
+            <div className="concierge-header d-flex align-items-center gap-3">
+              <i className="fa-solid fa-comments" style={{ color: '#2eb88a', fontSize: '1.3rem', flexShrink: 0 }} />
+              <div style={{ flex: 1 }}>
+                <h5 className="fw-semibold mb-0" style={{ color: '#1e293b', fontSize: '1.15rem' }}>
+                  Home Owner Concierge
+                </h5>
+                <small style={{ color: '#94a3b8' }}>Your AI home-ownership assistant</small>
+              </div>
+              <button
+                className="btn btn-sm"
+                onClick={() => setChatExpanded((prev) => !prev)}
+                title={chatExpanded ? 'Collapse chat' : 'Expand chat'}
+                style={{
+                  color: '#64748b',
+                  fontSize: '0.82rem',
+                  textDecoration: 'none',
+                  padding: '4px 10px',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 8,
+                  background: '#fff',
+                }}
+              >
+                <i className={`fa-solid ${chatExpanded ? 'fa-compress' : 'fa-expand'} me-1`} />
+                {chatExpanded ? 'Collapse' : 'Expand'}
+              </button>
+            </div>
+
+            <div className="concierge-messages" ref={chatMessagesRef}>
+              {chatMessages.map((m, i) => (
+                <div key={i} className={`concierge-bubble ${m.role}`}>
+                  {m.content}
+                </div>
+              ))}
+              {chatSending && (
+                <div className="concierge-bubble assistant" style={{ fontStyle: 'italic', color: '#94a3b8' }}>
+                  Thinking&hellip;
+                </div>
+              )}
+              <div ref={chatEndRef} />
+            </div>
+
+            <form className="concierge-input-bar" onSubmit={handleChatSend}>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Ask me anything about home ownership…"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                disabled={chatSending}
+                maxLength={4000}
+                style={{ borderRadius: 12, flex: 1 }}
+              />
+              <button
+                type="submit"
+                className="btn btn-primary d-flex align-items-center gap-1"
+                disabled={chatSending || !chatInput.trim()}
+                style={{ borderRadius: 12, padding: '0 16px', fontSize: '0.88rem', whiteSpace: 'nowrap', height: 38, position: 'relative', top: -4 }}
+              >
+                {chatSending ? (
+                  <><i className="fa-solid fa-spinner fa-spin" /> Sending</>
+                ) : (
+                  <><i className="fa-solid fa-paper-plane" /> Send</>
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
 
       <div className="row g-4 justify-content-center align-items-start">
         {/* ── Left column: Monthly Snapshot (wider) ── */}
@@ -305,6 +501,7 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
     </div>
   );
 }
