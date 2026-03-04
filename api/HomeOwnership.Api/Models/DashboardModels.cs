@@ -1,6 +1,7 @@
 namespace HomeOwnership.Api.Models;
 
 public record DashboardSummaryResponse(
+    string DisplayName,
     DateTime? ProfileUpdatedUtc,
     decimal? CurrentMortgageRate,
     decimal? HomeOwnersInsuranceMonthly,

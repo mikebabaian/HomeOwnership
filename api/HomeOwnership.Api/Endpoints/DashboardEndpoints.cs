@@ -1,5 +1,6 @@
 using HomeOwnership.Api.Data;
 using HomeOwnership.Api.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -11,13 +12,28 @@ public static class DashboardEndpoints
     public static IEndpointRouteBuilder MapDashboardEndpoints(this IEndpointRouteBuilder app)
     {
         // GET /api/dashboard/summary
-        app.MapGet("/api/dashboard/summary", async (ClaimsPrincipal principal, AppDbContext db) =>
+        app.MapGet("/api/dashboard/summary", async (ClaimsPrincipal principal, AppDbContext db, UserManager<IdentityUser> userManager) =>
         {
             var userId = GetUserId(principal);
 
             var profile = await db.UserProfiles
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.UserId == userId);
+
+            // Resolve display name: MessageBoardUserName > Identity UserName > email prefix
+            string displayName;
+            if (!string.IsNullOrWhiteSpace(profile?.MessageBoardUserName))
+            {
+                displayName = profile.MessageBoardUserName;
+            }
+            else
+            {
+                var identityUser = await userManager.FindByIdAsync(userId);
+                var email = identityUser?.Email ?? "";
+                displayName = identityUser?.UserName
+                    ?? (email.Contains('@') ? email[..email.IndexOf('@')] : email)
+                    ?? "there";
+            }
 
             var expenseByCategory = await db.BudgetItems
                 .Where(b => b.UserId == userId)
@@ -33,6 +49,7 @@ public static class DashboardEndpoints
             var isInTheRed = remaining.HasValue && remaining.Value < 0;
 
             return Results.Ok(new DashboardSummaryResponse(
+                DisplayName: displayName,
                 ProfileUpdatedUtc: profile?.UpdatedUtc,
                 CurrentMortgageRate: profile?.CurrentMortgageRate,
                 HomeOwnersInsuranceMonthly: profile?.HomeOwnersInsuranceMonthly,

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { api, DashboardSummaryResponse, ConciergeMessageDto } from '../lib/api';
+import { api, DashboardSummaryResponse, ConciergeMessageDto, MortgageRatesResponse } from '../lib/api';
 
 /* ---------- helpers ---------- */
 
@@ -55,6 +55,7 @@ export default function Dashboard() {
   const [data, setData] = useState<DashboardSummaryResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [topRates, setTopRates] = useState<MortgageRatesResponse | null>(null);
 
   /* ---- Concierge chat state ---- */
   const INTRO_MSG: ConciergeMessageDto = {
@@ -65,7 +66,11 @@ export default function Dashboard() {
   const [chatMessages, setChatMessages] = useState<ConciergeMessageDto[]>([INTRO_MSG]);
   const [chatInput, setChatInput] = useState('');
   const [chatSending, setChatSending] = useState(false);
-  const [chatExpanded, setChatExpanded] = useState(false);
+  const [chatSize, setChatSize] = useState<'minimized' | 'normal' | 'expanded'>(() => {
+    const saved = localStorage.getItem('concierge-size');
+    if (saved === 'minimized' || saved === 'normal' || saved === 'expanded') return saved;
+    return 'normal';
+  });
   const chatEndRef = useRef<HTMLDivElement>(null);
   const chatMessagesRef = useRef<HTMLDivElement>(null);
 
@@ -81,6 +86,10 @@ export default function Dashboard() {
       .then(setData)
       .catch(() => setError('Unable to load dashboard data.'))
       .finally(() => setLoading(false));
+
+    api.market.topRates(30, 'fixed', 3)
+      .then(setTopRates)
+      .catch(() => { /* non-critical — rates card just won't show */ });
   }, []);
 
   /* Load chat history on mount */
@@ -146,8 +155,60 @@ export default function Dashboard() {
   }
   const sliceTotal = slices.reduce((s, sl) => s + sl.value, 0);
 
+  /* ---- welcome header helpers ---- */
+  const welcomeSubtitle = (() => {
+    if (data.monthlyTakeHome === null) {
+      return 'Set Monthly Take Home in Profile to see your monthly snapshot.';
+    }
+    if (data.remainingThisMonth !== null && data.remainingThisMonth >= 0) {
+      return `You have ${fmt(data.remainingThisMonth)} left after expenses this month.`;
+    }
+    return `You're ${fmt(Math.abs(data.remainingThisMonth ?? 0))} over budget this month.`;
+  })();
+
   return (
     <div className="content-block">
+
+      {/* ── Welcome Header ───────────────────────────────────── */}
+      <div
+        className="d-flex flex-wrap align-items-center justify-content-between mb-5"
+        style={{
+          background: 'linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%)',
+          borderRadius: 16,
+          padding: '20px 28px',
+          border: '1px solid #e2e8f0',
+        }}
+      >
+        <div className="d-flex align-items-start gap-3">
+          <i className="fa-solid fa-hand-wave" style={{ color: '#f59e0b', fontSize: '1.3rem', marginTop: 4, flexShrink: 0 }} />
+          <div>
+            <h4 className="fw-bold mb-1" style={{ color: '#1e293b', fontSize: '1.35rem' }}>
+              Welcome back, {data.displayName}
+            </h4>
+            <span style={{ color: '#64748b', fontSize: '0.95rem' }}>
+            {welcomeSubtitle}
+            {' '}
+            {data.monthlyTakeHome !== null && (
+              data.isInTheRed
+                ? <span className="badge bg-danger ms-2" style={{ fontSize: '0.72rem', verticalAlign: 'middle' }}>
+                    <i className="fa-solid fa-triangle-exclamation me-1" />In the red
+                  </span>
+                : <span className="badge ms-2" style={{ fontSize: '0.72rem', verticalAlign: 'middle', background: '#dcfce7', color: '#16a34a' }}>
+                    <i className="fa-solid fa-circle-check me-1" />On track
+                  </span>
+            )}
+          </span>
+          </div>
+        </div>
+        <div className="d-flex gap-2 mt-2 mt-md-0">
+          <a href="/profile" className="btn btn-sm btn-outline-primary" style={{ borderRadius: 10, fontSize: '0.85rem' }}>
+            <i className="fa-solid fa-user-pen me-1" />Update Profile
+          </a>
+          <a href="/budget" className="btn btn-sm btn-outline-secondary" style={{ borderRadius: 10, fontSize: '0.85rem' }}>
+            <i className="fa-solid fa-plus me-1" />Add Budget Item
+          </a>
+        </div>
+      </div>
 
       {/* ── "In the Red" Alert ───────────────────────────────── */}
       {data.isInTheRed && (
@@ -191,9 +252,13 @@ export default function Dashboard() {
           flex-direction: column;
           height: 420px;
           transition: height 0.3s ease, box-shadow 0.2s ease, transform 0.2s ease;
+          overflow: hidden;
         }
         .concierge-panel.expanded {
           height: 820px;
+        }
+        .concierge-panel.minimized {
+          height: auto;
         }
         .concierge-panel:hover {
           box-shadow: 0 10px 32px rgba(11,34,56,0.11);
@@ -253,72 +318,135 @@ export default function Dashboard() {
       {/* ── Home Owner Concierge Chat ── */}
       <div className="row g-4 justify-content-center mb-3">
         <div className="col-11">
-          <div className={`concierge-panel${chatExpanded ? ' expanded' : ''}`}>
+          <div className={`concierge-panel ${chatSize}`}>
             <div className="concierge-header d-flex align-items-center gap-3">
               <i className="fa-solid fa-comments" style={{ color: '#2eb88a', fontSize: '1.3rem', flexShrink: 0 }} />
               <div style={{ flex: 1 }}>
                 <h5 className="fw-semibold mb-0" style={{ color: '#1e293b', fontSize: '1.15rem' }}>
                   Home Owner Concierge
                 </h5>
-                <small style={{ color: '#94a3b8' }}>Your AI home-ownership assistant</small>
-              </div>
-              <button
-                className="btn btn-sm"
-                onClick={() => setChatExpanded((prev) => !prev)}
-                title={chatExpanded ? 'Collapse chat' : 'Expand chat'}
-                style={{
-                  color: '#64748b',
-                  fontSize: '0.82rem',
-                  textDecoration: 'none',
-                  padding: '4px 10px',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: 8,
-                  background: '#fff',
-                }}
-              >
-                <i className={`fa-solid ${chatExpanded ? 'fa-compress' : 'fa-expand'} me-1`} />
-                {chatExpanded ? 'Collapse' : 'Expand'}
-              </button>
-            </div>
-
-            <div className="concierge-messages" ref={chatMessagesRef}>
-              {chatMessages.map((m, i) => (
-                <div key={i} className={`concierge-bubble ${m.role}`}>
-                  {m.content}
-                </div>
-              ))}
-              {chatSending && (
-                <div className="concierge-bubble assistant" style={{ fontStyle: 'italic', color: '#94a3b8' }}>
-                  Thinking&hellip;
-                </div>
-              )}
-              <div ref={chatEndRef} />
-            </div>
-
-            <form className="concierge-input-bar" onSubmit={handleChatSend}>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Ask me anything about home ownership…"
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                disabled={chatSending}
-                maxLength={4000}
-                style={{ borderRadius: 12, flex: 1 }}
-              />
-              <button
-                type="submit"
-                className="btn btn-primary d-flex align-items-center gap-1"
-                disabled={chatSending || !chatInput.trim()}
-                style={{ borderRadius: 12, padding: '0 16px', fontSize: '0.88rem', whiteSpace: 'nowrap', height: 38, position: 'relative', top: -4 }}
-              >
-                {chatSending ? (
-                  <><i className="fa-solid fa-spinner fa-spin" /> Sending</>
-                ) : (
-                  <><i className="fa-solid fa-paper-plane" /> Send</>
+                {chatSize !== 'minimized' && (
+                  <small style={{ color: '#94a3b8' }}>Your AI home-ownership assistant</small>
                 )}
-              </button>
-            </form>
+              </div>
+              <div className="d-flex gap-1">
+                {chatSize !== 'minimized' && (
+                  <button
+                    className="btn btn-sm"
+                    onClick={() => { setChatSize('minimized'); localStorage.setItem('concierge-size', 'minimized'); }}
+                    title="Minimize chat"
+                    style={{
+                      color: '#64748b',
+                      fontSize: '0.82rem',
+                      textDecoration: 'none',
+                      padding: '4px 10px',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: 8,
+                      background: '#fff',
+                    }}
+                  >
+                    <i className="fa-solid fa-minus me-1" />Minimize
+                  </button>
+                )}
+                {chatSize === 'minimized' && (
+                  <button
+                    className="btn btn-sm"
+                    onClick={() => { setChatSize('normal'); localStorage.setItem('concierge-size', 'normal'); }}
+                    title="Open chat"
+                    style={{
+                      color: '#64748b',
+                      fontSize: '0.82rem',
+                      textDecoration: 'none',
+                      padding: '4px 10px',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: 8,
+                      background: '#fff',
+                    }}
+                  >
+                    <i className="fa-solid fa-chevron-up me-1" />Open
+                  </button>
+                )}
+                {chatSize === 'normal' && (
+                  <button
+                    className="btn btn-sm"
+                    onClick={() => { setChatSize('expanded'); localStorage.setItem('concierge-size', 'expanded'); }}
+                    title="Expand chat"
+                    style={{
+                      color: '#64748b',
+                      fontSize: '0.82rem',
+                      textDecoration: 'none',
+                      padding: '4px 10px',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: 8,
+                      background: '#fff',
+                    }}
+                  >
+                    <i className="fa-solid fa-expand me-1" />Expand
+                  </button>
+                )}
+                {chatSize === 'expanded' && (
+                  <button
+                    className="btn btn-sm"
+                    onClick={() => { setChatSize('normal'); localStorage.setItem('concierge-size', 'normal'); }}
+                    title="Normal size"
+                    style={{
+                      color: '#64748b',
+                      fontSize: '0.82rem',
+                      textDecoration: 'none',
+                      padding: '4px 10px',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: 8,
+                      background: '#fff',
+                    }}
+                  >
+                    <i className="fa-solid fa-compress me-1" />Collapse
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {chatSize !== 'minimized' && (
+              <>
+                <div className="concierge-messages" ref={chatMessagesRef}>
+                  {chatMessages.map((m, i) => (
+                    <div key={i} className={`concierge-bubble ${m.role}`}>
+                      {m.content}
+                    </div>
+                  ))}
+                  {chatSending && (
+                    <div className="concierge-bubble assistant" style={{ fontStyle: 'italic', color: '#94a3b8' }}>
+                      Thinking&hellip;
+                    </div>
+                  )}
+                  <div ref={chatEndRef} />
+                </div>
+
+                <form className="concierge-input-bar" onSubmit={handleChatSend}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Ask me anything about home ownership…"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    disabled={chatSending}
+                    maxLength={4000}
+                    style={{ borderRadius: 12, flex: 1 }}
+                  />
+                  <button
+                    type="submit"
+                    className="btn btn-primary d-flex align-items-center gap-1"
+                    disabled={chatSending || !chatInput.trim()}
+                    style={{ borderRadius: 12, padding: '0 16px', fontSize: '0.88rem', whiteSpace: 'nowrap', height: 38, position: 'relative', top: -4 }}
+                  >
+                    {chatSending ? (
+                      <><i className="fa-solid fa-spinner fa-spin" /> Sending</>
+                    ) : (
+                      <><i className="fa-solid fa-paper-plane" /> Send</>
+                    )}
+                  </button>
+                </form>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -501,6 +629,65 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
+      {/* ── Top 3 Lowest Mortgage Rates ─────────────────────── */}
+      {topRates && topRates.items.length > 0 && (
+        <div className="row g-4 justify-content-center mt-2">
+          <div className="col-11">
+            <div
+              style={{
+                background: '#fff',
+                borderRadius: 20,
+                boxShadow: '0 6px 24px rgba(11,34,56,0.07)',
+                border: '1px solid #edf0f4',
+                padding: '24px 28px',
+              }}
+            >
+              <div className="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                  <h5 className="fw-semibold mb-0" style={{ color: '#1e293b', fontSize: '1.15rem' }}>
+                    <i className="fa-solid fa-chart-line me-2" style={{ color: '#2eb88a' }} />
+                    Top {topRates.items.length} Lowest {topRates.termYears}-Year {topRates.rateType === 'fixed' ? 'Fixed' : topRates.rateType} Rates
+                  </h5>
+                  <small style={{ color: '#94a3b8' }}>
+                    As of {new Date(topRates.asOfUtc).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    {' · '}Source: {topRates.items[0]?.source ?? 'N/A'}
+                  </small>
+                </div>
+              </div>
+
+              <div className="table-responsive">
+                <table className="table table-sm mb-0" style={{ fontSize: '0.92rem' }}>
+                  <thead>
+                    <tr style={{ color: '#64748b', borderBottom: '2px solid #e2e8f0' }}>
+                      <th style={{ fontWeight: 600 }}>Lender</th>
+                      <th className="text-end" style={{ fontWeight: 600 }}>Rate</th>
+                      <th className="text-end" style={{ fontWeight: 600 }}>APR</th>
+                      <th className="text-end" style={{ fontWeight: 600 }}>Points</th>
+                      <th style={{ fontWeight: 600 }}>Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {topRates.items.map((r, i) => (
+                      <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                        <td className="fw-medium" style={{ color: '#1e293b' }}>
+                          {r.url
+                            ? <a href={r.url} target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', textDecoration: 'none' }}>{r.lender}</a>
+                            : r.lender}
+                        </td>
+                        <td className="text-end fw-semibold" style={{ color: '#1e293b' }}>{r.rate.toFixed(3)}%</td>
+                        <td className="text-end" style={{ color: '#64748b' }}>{r.apr.toFixed(3)}%</td>
+                        <td className="text-end" style={{ color: '#64748b' }}>{r.points.toFixed(2)}</td>
+                        <td style={{ color: '#94a3b8', fontSize: '0.82rem' }}>{r.notes ?? '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

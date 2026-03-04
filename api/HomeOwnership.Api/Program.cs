@@ -80,6 +80,9 @@ builder.Services.AddOpenApi();
 // ── OpenAI / Concierge ─────────────────────────────────────────────────────
 builder.Services.AddHttpClient<OpenAiChatService>();
 
+// ── Mortgage Rate Provider ─────────────────────────────────────────────────
+builder.Services.AddSingleton<IMortgageRateProvider, StubMortgageRateProvider>();
+
 var app = builder.Build();
 
 // ── Middleware pipeline ────────────────────────────────────────────────────
@@ -104,6 +107,7 @@ app.MapBudgetEndpoints();
 app.MapDashboardEndpoints();
 app.MapCommunityEndpoints();
 app.MapConciergeEndpoints();
+app.MapMarketEndpoints();
 
 // SPA fallback – send all unmatched routes to index.html
 app.MapFallbackToFile("index.html");

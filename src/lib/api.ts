@@ -81,6 +81,7 @@ export interface CategoryTotal {
 }
 
 export interface DashboardSummaryResponse {
+  displayName: string;
   profileUpdatedUtc: string | null;
   currentMortgageRate: number | null;
   homeOwnersInsuranceMonthly: number | null;
@@ -89,6 +90,23 @@ export interface DashboardSummaryResponse {
   remainingThisMonth: number | null;
   isInTheRed: boolean;
   expenseByCategory: CategoryTotal[];
+}
+
+export interface MortgageRateItem {
+  lender: string;
+  apr: number;
+  rate: number;
+  points: number;
+  notes: string | null;
+  source: string;
+  url: string | null;
+}
+
+export interface MortgageRatesResponse {
+  asOfUtc: string;
+  termYears: number;
+  rateType: string;
+  items: MortgageRateItem[];
 }
 
 export interface ThreadSummaryDto {
@@ -228,6 +246,14 @@ export const api = {
   dashboard: {
     /** GET /api/dashboard/summary */
     summary: () => request<DashboardSummaryResponse>('/dashboard/summary'),
+  },
+
+  market: {
+    /** GET /api/market/mortgage-rates/top */
+    topRates: (termYears = 30, rateType = 'fixed', count = 3) =>
+      request<MortgageRatesResponse>(
+        `/market/mortgage-rates/top?termYears=${termYears}&rateType=${rateType}&count=${count}`
+      ),
   },
 
   community: {
