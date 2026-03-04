@@ -7,11 +7,6 @@ interface FormData {
   email: string;
   password: string;
   confirmPassword: string;
-  telephone: string;
-  street: string;
-  city: string;
-  state: string;
-  zip: string;
 }
 
 interface Errors {
@@ -23,11 +18,6 @@ const initialForm: FormData = {
   email: '',
   password: '',
   confirmPassword: '',
-  telephone: '',
-  street: '',
-  city: '',
-  state: '',
-  zip: '',
 };
 
 export default function Register() {
@@ -55,11 +45,6 @@ export default function Register() {
     else if (formData.password.length < 8) newErrors.password = 'Password must be at least 8 characters.';
     if (!formData.confirmPassword) newErrors.confirmPassword = 'Please confirm your password.';
     else if (formData.confirmPassword !== formData.password) newErrors.confirmPassword = 'Passwords do not match.';
-    if (!formData.telephone.trim()) newErrors.telephone = 'Telephone Number is required.';
-    if (!formData.street.trim()) newErrors.street = 'Street Address is required.';
-    if (!formData.city.trim()) newErrors.city = 'City is required.';
-    if (!formData.state.trim()) newErrors.state = 'State is required.';
-    if (!formData.zip.trim()) newErrors.zip = 'Zip Code is required.';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -105,45 +90,6 @@ export default function Register() {
                   required
                 />
                 {errors.fullName && <div className="muted" style={{ color: '#b91c1c', marginTop: 2 }}>{errors.fullName}</div>}
-
-                <label htmlFor="register-telephone">Telephone Number</label>
-                <input
-                  id="register-telephone"
-                  name="telephone"
-                  type="tel"
-                  className="form-control"
-                  placeholder="(555) 123-4567"
-                  value={formData.telephone}
-                  onChange={handleChange}
-                  required
-                />
-                {errors.telephone && <div className="muted" style={{ color: '#b91c1c', marginTop: 2 }}>{errors.telephone}</div>}
-
-                <label htmlFor="register-city">City</label>
-                <input
-                  id="register-city"
-                  name="city"
-                  type="text"
-                  className="form-control"
-                  placeholder="Springfield"
-                  value={formData.city}
-                  onChange={handleChange}
-                  required
-                />
-                {errors.city && <div className="muted" style={{ color: '#b91c1c', marginTop: 2 }}>{errors.city}</div>}
-
-                <label htmlFor="register-zip">Zip Code</label>
-                <input
-                  id="register-zip"
-                  name="zip"
-                  type="text"
-                  className="form-control"
-                  placeholder="90210"
-                  value={formData.zip}
-                  onChange={handleChange}
-                  required
-                />
-                {errors.zip && <div className="muted" style={{ color: '#b91c1c', marginTop: 2 }}>{errors.zip}</div>}
               {/* end of left column */}
             </div>
             <div className="register-col">
@@ -159,32 +105,6 @@ export default function Register() {
                   required
                 />
                 {errors.email && <div className="muted" style={{ color: '#b91c1c', marginTop: 2 }}>{errors.email}</div>}
-
-                <label htmlFor="register-street">Street Address</label>
-                <input
-                  id="register-street"
-                  name="street"
-                  type="text"
-                  className="form-control"
-                  placeholder="123 Main St"
-                  value={formData.street}
-                  onChange={handleChange}
-                  required
-                />
-                {errors.street && <div className="muted" style={{ color: '#b91c1c', marginTop: 2 }}>{errors.street}</div>}
-
-                <label htmlFor="register-state">State</label>
-                <input
-                  id="register-state"
-                  name="state"
-                  type="text"
-                  className="form-control"
-                  placeholder="CA"
-                  value={formData.state}
-                  onChange={handleChange}
-                  required
-                />
-                {errors.state && <div className="muted" style={{ color: '#b91c1c', marginTop: 2 }}>{errors.state}</div>}
               </div>
             </div>
             {/* Password fields at the end, full width */}
