@@ -16,7 +16,7 @@ export default function InitialApp() {
         <li>Authentication and backend persistence</li>
         <li>Marketplace or payments</li>
       </ul>
-      <p>See the product overview for more details.</p>
+      <p>See the product overview for more details. </p>
     </article>
   )
 }
