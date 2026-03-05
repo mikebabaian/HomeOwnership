@@ -21,3 +21,5 @@ public record UpdateBudgetItemRequest(
     decimal Amount,
     string? Notes,
     int SortOrder = 0);
+
+public record BudgetAiAnalysisResponse(string Analysis);

@@ -75,6 +75,10 @@ export interface UpdateBudgetItemRequest {
   sortOrder?: number;
 }
 
+export interface BudgetAiAnalysisResponse {
+  analysis: string;
+}
+
 export interface CategoryTotal {
   category: string;
   total: number;
@@ -241,6 +245,10 @@ export const api = {
     /** DELETE /api/budget/items/:id */
     remove: (id: number) =>
       request<void>(`/budget/items/${id}`, { method: 'DELETE' }),
+
+    /** POST /api/budget/ai-analysis */
+    aiAnalysis: () =>
+      request<BudgetAiAnalysisResponse>('/budget/ai-analysis', { method: 'POST' }),
   },
 
   dashboard: {

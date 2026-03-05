@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { api, BudgetItemDto, ProfileResponse } from '../lib/api';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faWandMagicSparkles, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const CATEGORIES = ['Housing', 'Utilities', 'Insurance', 'Debt', 'Transportation', 'Food', 'Other'];
 
@@ -19,6 +21,12 @@ export default function Budget() {
   const [editId, setEditId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState({ category: '', name: '', amount: '', notes: '' });
   const [saving, setSaving] = useState(false);
+
+  // AI Analysis state
+  const [aiModalOpen, setAiModalOpen] = useState(false);
+  const [aiAnalysis, setAiAnalysis] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
 
   const totalExpenses = items.reduce((sum, i) => sum + i.amount, 0);
   const monthlyTakeHome = profile?.monthlyTakeHome ?? null;
@@ -104,6 +112,24 @@ export default function Budget() {
     }
   };
 
+  // ── AI Analysis ──────────────────────────────────────────────────────────
+  const handleAiAnalysis = async () => {
+    setAiLoading(true);
+    setAiError('');
+    setAiAnalysis('');
+    setAiModalOpen(true);
+    try {
+      const res = await api.budget.aiAnalysis();
+      setAiAnalysis(res.analysis);
+    } catch (err: any) {
+      setAiError(err?.message ?? 'Failed to get AI analysis. Please try again.');
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const showAiButton = items.length > 0 && monthlyTakeHome != null;
+
   if (loading) {
     return (
       <div className="content-block">
@@ -114,7 +140,20 @@ export default function Budget() {
 
   return (
     <div className="content-block">
-      <h2 style={{ marginBottom: 8 }}>Budget</h2>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+        <h2 style={{ margin: 0 }}>Budget</h2>
+        {showAiButton && (
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={handleAiAnalysis}
+            disabled={aiLoading}
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          >
+            <FontAwesomeIcon icon={faWandMagicSparkles} />
+            {aiLoading ? 'Analyzing…' : 'AI Analysis'}
+          </button>
+        )}
+      </div>
       <p className="muted" style={{ marginBottom: 20 }}>
         Track your monthly expenses in one place.
       </p>
@@ -236,6 +275,77 @@ export default function Budget() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* ── AI Analysis Modal ──────────────────────────────────────────── */}
+      {aiModalOpen && (
+        <div
+          style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0,0,0,0.5)', zIndex: 9999,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 20,
+          }}
+          onClick={() => setAiModalOpen(false)}
+        >
+          <div
+            style={{
+              background: '#fff', borderRadius: 12, maxWidth: 640, width: '100%',
+              maxHeight: '80vh', display: 'flex', flexDirection: 'column',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Modal header */}
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '16px 20px', borderBottom: '1px solid #e5e7eb',
+            }}>
+              <h4 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <FontAwesomeIcon icon={faWandMagicSparkles} style={{ color: 'var(--hos-green, #2F7D5C)' }} />
+                AI Budget Analysis
+              </h4>
+              <button
+                onClick={() => setAiModalOpen(false)}
+                style={{
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  fontSize: 18, color: '#666', padding: '4px 8px',
+                }}
+                aria-label="Close"
+              >
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
+            </div>
+
+            {/* Modal body */}
+            <div style={{ padding: 20, overflowY: 'auto', flex: 1 }}>
+              {aiLoading && (
+                <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                  <div style={{ fontSize: 14, color: '#666' }}>Analyzing your budget with AI…</div>
+                  <div style={{ marginTop: 12, fontSize: 12, color: '#999' }}>This may take a few seconds.</div>
+                </div>
+              )}
+              {aiError && (
+                <div className="alert alert-danger">{aiError}</div>
+              )}
+              {aiAnalysis && (
+                <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7, fontSize: 14 }}>
+                  {aiAnalysis}
+                </div>
+              )}
+            </div>
+
+            {/* Modal footer */}
+            <div style={{
+              padding: '12px 20px', borderTop: '1px solid #e5e7eb',
+              display: 'flex', justifyContent: 'flex-end',
+            }}>
+              <button className="btn btn-secondary btn-sm" onClick={() => setAiModalOpen(false)}>
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
