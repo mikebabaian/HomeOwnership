@@ -49,17 +49,6 @@ public static class ConciergeEndpoints
             if (string.IsNullOrEmpty(message) || message.Length > 4000)
                 return Results.BadRequest(new { message = "Message must be 1-4000 characters." });
 
-            // Save user message
-            var userMsg = new ConciergeMessage
-            {
-                UserId = userId,
-                Role = "user",
-                Content = message,
-                CreatedUtc = DateTime.UtcNow,
-            };
-            db.ConciergeMessages.Add(userMsg);
-            await db.SaveChangesAsync();
-
             // Build conversation history (last 20 messages for context window)
             var recent = await db.ConciergeMessages
                 .Where(m => m.UserId == userId)
@@ -73,7 +62,10 @@ public static class ConciergeEndpoints
                 .Select(m => (m.Role, m.Content))
                 .ToList();
 
-            // Call OpenAI
+            // Append the new user message in-memory so OpenAI sees it
+            history.Add(("user", message));
+
+            // Call OpenAI — if it fails, return the error but don't persist anything
             string reply;
             try
             {
@@ -82,18 +74,28 @@ public static class ConciergeEndpoints
             catch (Exception ex)
             {
                 Console.WriteLine($"OpenAI error: {ex.Message}");
-                reply = "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.";
+                return Results.Ok(new ConciergeSendResponse(
+                    "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.",
+                    DateTime.UtcNow));
             }
 
-            // Save assistant reply
+            // OpenAI succeeded — save both user message and assistant reply
+            var now = DateTime.UtcNow;
+            var userMsg = new ConciergeMessage
+            {
+                UserId = userId,
+                Role = "user",
+                Content = message,
+                CreatedUtc = now,
+            };
             var assistantMsg = new ConciergeMessage
             {
                 UserId = userId,
                 Role = "assistant",
                 Content = reply,
-                CreatedUtc = DateTime.UtcNow,
+                CreatedUtc = now.AddMilliseconds(1), // ensure ordering
             };
-            db.ConciergeMessages.Add(assistantMsg);
+            db.ConciergeMessages.AddRange(userMsg, assistantMsg);
             await db.SaveChangesAsync();
 
             return Results.Ok(new ConciergeSendResponse(reply, assistantMsg.CreatedUtc));
