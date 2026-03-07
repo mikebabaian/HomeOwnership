@@ -119,149 +119,178 @@ export default function Community() {
     return <div className="content-block"><p>Loading community&hellip;</p></div>;
   }
 
-  // ── Two-column layout: Thread list (left) | Detail / New thread (right) ──
+  // ── Two views: Thread list OR Thread detail ──
   return (
     <div className="content-block">
-      <div className="d-flex justify-content-between align-items-center mb-1">
-        <h4 className="mb-0">Community</h4>
-        {hasUsername && !selectedThread && (
-          <button className="btn btn-primary btn-sm" onClick={() => setShowNewThread(!showNewThread)}>
-            {showNewThread ? 'Cancel' : '+ New Thread'}
-          </button>
-        )}
-      </div>
-
-      {!selectedThread && !showNewThread && threads.length > 0 && (
-        <p className="text-muted mb-3">Select a thread to view the conversation.</p>
-      )}
-
       {error && <div className="alert alert-danger py-2">{error}</div>}
 
-      {!hasUsername && (
+      {!hasUsername && !selectedThread && (
         <div className="alert alert-info py-2">
           <i className="fa-solid fa-info-circle me-2" />
           <a href="/profile">Set your Message Board username in Profile</a> to start threads and reply.
         </div>
       )}
 
-      {/* ── Thread cards: 2 per row at col-5 ── */}
-      {threads.length === 0 && !showNewThread ? (
-        <p className="text-muted">No threads yet. Be the first to start a conversation!</p>
-      ) : (
-        <div className="row g-3 justify-content-center mb-3">
-          {threads.map((t) => (
-            <div key={t.id} className="col-5">
-              <div
-                className="card h-100"
-                style={{
-                  cursor: 'pointer',
-                  backgroundColor: '#f5f6f8',
-                  borderColor: selectedThread?.id === t.id ? 'var(--hos-primary)' : '#d0d4da',
-                }}
-                onClick={() => openThread(t.id)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && openThread(t.id)}
-              >
-                <div className="card-body py-2 px-3 d-flex justify-content-between align-items-center">
-                  <div>
-                    <strong>{t.title}</strong>
-                    <small className="text-muted d-block">
-                      by {t.createdByDisplayName} &middot; {timeAgo(t.updatedUtc)}
-                    </small>
+      {/* ════════════════════════════════════════════════════════════════════
+           VIEW 1 — Thread List (no thread selected)
+         ════════════════════════════════════════════════════════════════════ */}
+      {!selectedThread && (
+        <>
+          <div className="d-flex justify-content-between align-items-center mb-1">
+            <h4 className="mb-0">Community</h4>
+            {hasUsername && (
+              <button className="btn btn-primary btn-sm" onClick={() => setShowNewThread(!showNewThread)}>
+                {showNewThread ? 'Cancel' : '+ New Thread'}
+              </button>
+            )}
+          </div>
+
+          {!showNewThread && threads.length > 0 && (
+            <p className="text-muted mb-3">Select a thread to view the conversation.</p>
+          )}
+
+          {/* ── New thread form ── */}
+          {showNewThread && (
+            <div className="row justify-content-center mb-3 mt-3">
+              <div className="col-10">
+                <form onSubmit={handleCreateThread} className="card" style={{ backgroundColor: '#f5f6f8', borderColor: '#d0d4da' }}>
+                  <div className="card-body py-2 px-3">
+                    <h6 className="mb-2">New Thread</h6>
+                    <input
+                      className="form-control mb-2"
+                      type="text"
+                      placeholder="Thread title"
+                      maxLength={200}
+                      value={newTitle}
+                      onChange={(e) => setNewTitle(e.target.value)}
+                    />
+                    <textarea
+                      className="form-control mb-2"
+                      rows={3}
+                      placeholder="What's on your mind?"
+                      maxLength={4000}
+                      value={newBody}
+                      onChange={(e) => setNewBody(e.target.value)}
+                    />
+                    <button
+                      className="btn btn-primary btn-sm"
+                      disabled={creating || !newTitle.trim() || !newBody.trim()}
+                    >
+                      {creating ? 'Creating…' : 'Create Thread'}
+                    </button>
                   </div>
-                  <span className="badge bg-secondary">{t.replyCount} {t.replyCount === 1 ? 'post' : 'posts'}</span>
-                </div>
+                </form>
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          )}
 
-      {/* ── New thread form (full width, centered) ── */}
-      {showNewThread && !selectedThread && (
-        <div className="row justify-content-center mb-3">
-          <div className="col-10">
-            <form onSubmit={handleCreateThread} className="card" style={{ backgroundColor: '#f5f6f8', borderColor: '#d0d4da' }}>
-              <div className="card-body py-2 px-3">
-                <h6 className="mb-2">New Thread</h6>
-                <input
-                  className="form-control mb-2"
-                  type="text"
-                  placeholder="Thread title"
-                  maxLength={200}
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                />
-                <textarea
-                  className="form-control mb-2"
-                  rows={3}
-                  placeholder="What's on your mind?"
-                  maxLength={4000}
-                  value={newBody}
-                  onChange={(e) => setNewBody(e.target.value)}
-                />
-                <button
-                  className="btn btn-primary btn-sm"
-                  disabled={creating || !newTitle.trim() || !newBody.trim()}
-                >
-                  {creating ? 'Creating…' : 'Create Thread'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ── Thread detail (full width, centered) ── */}
-      {selectedThread && (
-        <div className="row justify-content-center">
-          <div className="col-10">
-            <button className="btn btn-sm btn-outline-secondary mb-3" onClick={closeThread}>
-              <i className="fa-solid fa-arrow-left me-1" /> Back
-            </button>
-
-            <h5 className="mb-1">{selectedThread.title}</h5>
-            <small className="text-muted d-block mb-3">
-              Started by <strong>{selectedThread.createdByDisplayName}</strong> &middot; {fmtDate(selectedThread.createdUtc)}
-            </small>
-
-            {/* Posts */}
-            <div className="d-flex flex-column gap-2 mb-3" style={{ maxHeight: 400, overflowY: 'auto' }}>
-              {selectedThread.posts.map((p) => (
-                <div key={p.id} className="card" style={{ backgroundColor: '#f5f6f8', borderColor: '#d0d4da' }}>
-                  <div className="card-body py-2 px-3">
-                    <div className="d-flex justify-content-between align-items-center mb-1">
-                      <strong style={{ fontSize: '0.9rem' }}>{p.createdByDisplayName}</strong>
-                      <small className="text-muted">{fmtDate(p.createdUtc)}</small>
+          {/* ── Thread cards ── */}
+          {threads.length === 0 && !showNewThread ? (
+            <p className="text-muted">No threads yet. Be the first to start a conversation!</p>
+          ) : (
+            <div className="row g-3 justify-content-center mb-3">
+              {threads.map((t) => (
+                <div key={t.id} className="col-5">
+                  <div
+                    className="card h-100"
+                    style={{
+                      cursor: 'pointer',
+                      backgroundColor: '#f5f6f8',
+                      borderColor: '#d0d4da',
+                    }}
+                    onClick={() => openThread(t.id)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => e.key === 'Enter' && openThread(t.id)}
+                  >
+                    <div className="card-body py-2 px-3 d-flex justify-content-between align-items-center">
+                      <div>
+                        <strong>{t.title}</strong>
+                        <small className="text-muted d-block">
+                          by {t.createdByDisplayName} &middot; {timeAgo(t.updatedUtc)}
+                        </small>
+                      </div>
+                      <span className="badge bg-secondary">{t.replyCount} {t.replyCount === 1 ? 'post' : 'posts'}</span>
                     </div>
-                    <p className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>{p.body}</p>
                   </div>
                 </div>
               ))}
             </div>
+          )}
+        </>
+      )}
 
-            {/* Reply form */}
-            {hasUsername ? (
-              <form onSubmit={handleReply}>
-                <textarea
-                  className="form-control mb-2"
-                  rows={2}
-                  placeholder="Write a reply…"
-                  maxLength={4000}
-                  value={replyBody}
-                  onChange={(e) => setReplyBody(e.target.value)}
-                />
-                <button className="btn btn-primary btn-sm" disabled={replying || !replyBody.trim()}>
-                  {replying ? 'Posting…' : 'Post Reply'}
-                </button>
-              </form>
-            ) : (
-              <div className="alert alert-info py-2 mb-0">
-                <i className="fa-solid fa-info-circle me-2" />
-                <a href="/profile">Set your Message Board username in Profile</a> to post.
+      {/* ════════════════════════════════════════════════════════════════════
+           VIEW 2 — Thread Detail (thread selected)
+         ════════════════════════════════════════════════════════════════════ */}
+      {selectedThread && (
+        <div className="row justify-content-center">
+          <div className="col-12">
+
+            {/* ── Single conversation card ── */}
+            <div className="card" style={{ backgroundColor: '#fff', borderColor: '#d0d4da', maxWidth: 'none' }}>
+
+              {/* ── Thread header ── */}
+              <div className="card-body pb-0" style={{ borderBottom: '2px solid #e5e7eb' }}>
+                <h5 className="mb-1">{selectedThread.title}</h5>
+                <small className="text-muted d-block mb-3">
+                  Started by <strong>{selectedThread.createdByDisplayName}</strong> &middot; {fmtDate(selectedThread.createdUtc)}
+                </small>
               </div>
-            )}
+
+              {/* ── Conversation messages ── */}
+              <div className="card-body py-0">
+                {selectedThread.posts.map((p, idx) => {
+                  const isOriginal = idx === 0;
+                  return (
+                    <div
+                      key={p.id}
+                      style={{
+                        padding: isOriginal ? '14px 1rem' : '14px 0',
+                        borderBottom: idx < selectedThread.posts.length - 1 ? '1px solid #e5e7eb' : 'none',
+                        backgroundColor: isOriginal ? '#f8f9fa' : 'transparent',
+                        margin: isOriginal ? '0 -1rem' : undefined,
+                        borderRadius: isOriginal ? 4 : 0,
+                      }}
+                    >
+                      <div className="d-flex justify-content-between align-items-center mb-1">
+                        <strong style={{ fontSize: '0.9rem' }}>{p.createdByDisplayName}</strong>
+                        <small className="text-muted">{fmtDate(p.createdUtc)}</small>
+                      </div>
+                      <p className="mb-0" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{p.body}</p>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* ── Reply composer ── */}
+              <div className="card-body pt-0" style={{ borderTop: '1px solid #e5e7eb' }}>
+                {hasUsername ? (
+                  <form onSubmit={handleReply} style={{ paddingTop: 14 }}>
+                    <textarea
+                      className="form-control mb-2"
+                      rows={2}
+                      placeholder="Write a reply…"
+                      maxLength={4000}
+                      value={replyBody}
+                      onChange={(e) => setReplyBody(e.target.value)}
+                    />
+                    <button className="btn btn-primary btn-sm" disabled={replying || !replyBody.trim()}>
+                      {replying ? 'Posting…' : 'Post Reply'}
+                    </button>
+                  </form>
+                ) : (
+                  <div className="alert alert-info py-2 mb-0 mt-3">
+                    <i className="fa-solid fa-info-circle me-2" />
+                    <a href="/profile">Set your Message Board username in Profile</a> to post.
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <button className="btn btn-sm btn-outline-secondary mt-3" onClick={closeThread}>
+              <i className="fa-solid fa-arrow-left me-1" /> Back to Threads
+            </button>
           </div>
         </div>
       )}
